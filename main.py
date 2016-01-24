@@ -1,17 +1,20 @@
-"""`main` is the top level module for your Flask application."""
+# -*- coding: utf-8 -*-
+from bs4 import BeautifulSoup
+from my.util import i2ch
 
-# Import the Flask Framework
 from flask import Flask
 app = Flask(__name__)
 # Note: We don't need to call run() since our application is embedded within
 # the App Engine WSGI application server.
-
 
 @app.route('/')
 def hello():
     """Return a friendly HTTP greeting."""
     return 'Hello World!'
 
+@app.route('/test')
+def open():
+    return i2ch.get_boards()
 
 @app.errorhandler(404)
 def page_not_found(e):
