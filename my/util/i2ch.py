@@ -35,4 +35,14 @@ def get_boards():
                 'name': splitline[1],
                 'title': splitline[2]
             })
-    return json.dumps(boardlist)
+    return boardlist
+
+def get_board_host_url(category, title):
+    u"""
+        板一覧情報を取得する
+    """
+    boards = get_boards()
+    for board in boards[category]:
+        if board['title'] == title:
+            return board['host']
+    return ''

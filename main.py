@@ -14,7 +14,8 @@ def hello():
 
 @app.route('/test')
 def open():
-    return i2ch.get_boards()
+    # ロボゲー板のホストを取得する
+    return i2ch.get_board_host_url('ゲーム', 'ロボットゲー')
 
 @app.errorhandler(404)
 def page_not_found(e):
