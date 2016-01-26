@@ -46,3 +46,13 @@ def get_board_host_url(category, title):
         if board['title'] == title:
             return board['host']
     return ''
+
+def get_board_subject_url(category, title):
+    u"""
+        板一覧情報を取得する
+    """
+    boards = get_boards()
+    for board in boards[category]:
+        if board['title'] == title:
+            return 'http://' + board['host'] + '/' + board['name'] + '/subject.txt'
+    return ''
