@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import urllib2
+
 from bs4 import BeautifulSoup
 from my.util import i2ch
 
@@ -14,9 +16,13 @@ def hello():
 
 @app.route('/test')
 def open():
-    # ロボゲー板のホストを取得する
-    #return i2ch.get_board_host_url('ゲーム', 'ロボットゲー')
-    return i2ch.get_board_subject_url('ゲーム', 'ロボットゲー')
+    url = i2ch.get_board_subject_url('ゲーム', 'ロボットゲー')
+    subject = urllib2.urlopen(url).read()
+    unicodesubject = unicode(subject, 'shift-jis', 'ignore')
+    list = unicodesubject.splitlines()
+    for line in list:
+        splitline = line.split('<>')
+        return splitline[1]
 
 @app.errorhandler(404)
 def page_not_found(e):
