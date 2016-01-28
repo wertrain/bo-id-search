@@ -16,13 +16,10 @@ def hello():
 
 @app.route('/test')
 def open():
-    url = i2ch.get_board_subject_url('ゲーム', 'ロボットゲー')
-    subject = urllib2.urlopen(url).read()
-    unicodesubject = unicode(subject, 'shift-jis', 'ignore')
-    list = unicodesubject.splitlines()
-    for line in list:
-        splitline = line.split('<>')
-        return splitline[1]
+    thread_list = i2ch.get_thread_list('ゲーム', 'ロボットゲー', 'バトルオペレーション晒し')
+    thread_list = i2ch.get_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し')
+    for thread in thread_list:
+       return thread['title']
 
 @app.errorhandler(404)
 def page_not_found(e):

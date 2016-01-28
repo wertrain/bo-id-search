@@ -49,10 +49,29 @@ def get_board_host_url(category, title):
 
 def get_board_subject_url(category, title):
     u"""
-        板一覧情報を取得する
+        subject.txtを取得する
     """
     boards = get_boards()
     for board in boards[category]:
         if board['title'] == title:
             return 'http://' + board['host'] + '/' + board['name'] + '/subject.txt'
     return ''
+
+def get_thread_list(category, title, thread):
+    u"""
+        板からスレッド取得する
+    """
+    url = get_board_subject_url(category, title)
+    subject = urllib2.urlopen(url).read()
+    unicodesubject = unicode(subject, 'shift-jis', 'ignore')
+
+    result = []
+    list = unicodesubject.splitlines()
+    for line in list:
+        splitline = line.split('<>')
+        if thread.decode('utf-8') in splitline[1]:
+            result.append({
+                'title': splitline[1],
+                'url': splitline[0]
+            })
+    return result
