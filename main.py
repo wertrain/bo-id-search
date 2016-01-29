@@ -16,10 +16,10 @@ def hello():
 
 @app.route('/test')
 def open():
-    thread_list = i2ch.get_thread_list('ゲーム', 'ロボットゲー', 'バトルオペレーション晒し')
-    thread_list = i2ch.get_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し')
+    #thread_list = i2ch.search_thread_list('ゲーム', 'ロボットゲー', 'バトルオペレーション晒し')
+    thread_list = i2ch.search_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し')
     for thread in thread_list:
-       return thread['title']
+       return thread['url']
 
 @app.errorhandler(404)
 def page_not_found(e):

@@ -57,11 +57,19 @@ def get_board_subject_url(category, title):
             return 'http://' + board['host'] + '/' + board['name'] + '/subject.txt'
     return ''
 
-def get_thread_list(category, title, thread):
+def search_thread_list(category, title, thread):
     u"""
         板からスレッド取得する
     """
-    url = get_board_subject_url(category, title)
+    target_board = None
+    boards = get_boards()
+    for board in boards[category]:
+        if board['title'] == title:
+            target_board = board
+    if target_board == None:
+        return ''
+    
+    url = 'http://' + target_board['host'] + '/' + target_board['name'] + '/subject.txt'
     subject = urllib2.urlopen(url).read()
     unicodesubject = unicode(subject, 'shift-jis', 'ignore')
 
@@ -70,8 +78,18 @@ def get_thread_list(category, title, thread):
     for line in list:
         splitline = line.split('<>')
         if thread.decode('utf-8') in splitline[1]:
+            dat_value = splitline[0].replace('.dat', '')
             result.append({
                 'title': splitline[1],
-                'url': splitline[0]
+                'url': 'http://' + target_board['host'] + '/test/read.cgi/' + target_board['name'] + '/' + dat_value,
             })
     return result
+
+def parse_thread_html(url):
+    u"""
+        スレッドの URL から HTML を取得し、パースする
+    """
+    html = urllib2.urlopen(url).read()
+    utf8text = unicode(html, 'shift-jis').encode('utf-8')
+    
+    
