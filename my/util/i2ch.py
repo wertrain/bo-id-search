@@ -91,5 +91,3 @@ def parse_thread_html(url):
     """
     html = urllib2.urlopen(url).read()
     utf8text = unicode(html, 'shift-jis').encode('utf-8')
-    
-    
