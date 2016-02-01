@@ -15,7 +15,7 @@ def is_valid_id(id):
     lowerid = id.lower()
     if lowerid in list:
         return False
-    p = re.compile('^(ww+)|^(ll+)|^(TUEE+)|^(HP[0-9]+)|^(AM([0-9]){1,2}$)|^(PM([0-9]){1,2}$)')
+    p = re.compile('^(ww+)|^(ll+)|^(ee+)|^(TUEE+)|^(HP[0-9]+)|^(AM([0-9]){1,2}$)|^(PM([0-9]){1,2}$)')
     return p.search(id) == None
 
 if __name__ == '__main__':
@@ -32,7 +32,14 @@ if __name__ == '__main__':
     for dt in bs.find_all('dt'):
         dd = dt.findNextSibling('dd')
         ddtext = r.sub('', dd.text)
+        # 1レス分の投稿は重複判定のため、いったんこの配列へ
+        ids = []
         iterator = p.finditer(ddtext)
         for match in iterator:
-            if is_valid_id(match.group()):
-                print match.group()
+            id = match.group()
+            if is_valid_id(id):
+                ids.append(id)
+        # 1レス分の投稿にある ID の重複削除
+        ids = list(set(ids))
+        for id in ids:
+            print id
