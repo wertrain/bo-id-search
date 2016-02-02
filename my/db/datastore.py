@@ -10,10 +10,24 @@ class Thread (db.Model):
     u"""
         スレッドを表すデータモデル
     """
-    id = db.IntegerProperty()
+    id = db.StringProperty()
     host_url = db.StringProperty()
 
 class Response (db.Model):
     u"""
         レスを表すデータモデル
     """
+    name = db.StringProperty()
+    mail = db.StringProperty()
+    body = db.StringProperty()
+    thread = db.ReferenceProperty(Thread)
+    at = db.DateTimeProperty(auto_now_add=False)
+    users = db.ListProperty(db.Key)
+
+class PSNUser (db.Model):
+    u"""
+        PSN ユーザーを表すデータモデル
+    """
+    id = db.StringProperty()
+    count = db.IntegerProperty()
+    responses = db.ListProperty(db.Key)
