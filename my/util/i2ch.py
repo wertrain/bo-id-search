@@ -6,6 +6,7 @@ u"""
 """
 import urllib2
 import json
+from datetime import datetime
 
 def get_boards():
     u"""
@@ -91,3 +92,17 @@ def parse_thread_html(url):
     """
     html = urllib2.urlopen(url).read()
     utf8text = unicode(html, 'shift-jis').encode('utf-8')
+
+def parse_dt_text(dttext):
+    u"""
+        HTMLタグ dt の行から レス番号/名前/ID/時刻 をパースし、オブジェクトとして返す
+    """
+    base = dttext.split('：')
+    info = base[2].split()
+    tdatetime = datetime.strptime(info[0][:10] + ' ' + info[1][:8], '%Y/%m/%d %H:%M:%S')
+    return {
+        'number': unicode(base[0], 'utf-8'), 
+        'name': unicode(base[1], 'utf-8', 'ignore'),
+        'id': unicode(info[2][3:], 'utf-8'), 
+        'datetime': tdatetime
+    }

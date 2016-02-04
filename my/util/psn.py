@@ -6,6 +6,7 @@ u"""
 """
 import re
 from bs4 import BeautifulSoup
+from my.util import i2ch
 
 def is_valid_id(id):
     u"""
@@ -34,6 +35,8 @@ def get_user_list_at_html(html):
     all_id = []
     bs = BeautifulSoup(html)
     for dt in bs.find_all('dt'):
+        info = i2ch.parse_dt_text(dt.text.encode('utf-8', 'ignore'))
+        print info['datetime']
         dd = dt.findNextSibling('dd')
         ddtext = r.sub('', dd.text)
         # 1レス分の投稿は重複判定のため、いったんこの配列へ
