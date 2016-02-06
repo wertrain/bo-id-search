@@ -8,6 +8,30 @@ import re
 from bs4 import BeautifulSoup
 from my.util import i2ch
 
+class PSNUtil:
+    """PSN 関連ユーティリティ""" 
+    def __init__(self):
+        self.re_id = re.compile('([a-zA-Z]{1})([a-zA-Z0-9\_-]){3,15}')
+        self.re_eject = re.compile('((?<=ID:)([a-zA-Z0-9\_-]){6,10})|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)')
+        self.re_frequent = re.compile('^(ww+)|^(ll+)|^(ee+)|^(TUEE+)|^(HP[0-9]+)|^(AM([0-9]){1,2}$)|^(PM([0-9]){1,2}$)')
+        
+    def is_valid_id(self, id):
+        u"""
+            有効な PSN ID か判定する
+        """
+        # 頻出単語BL
+        list = ['wiki', 'twitter', 'href', 'target', 'blank', 
+                'border', 'exam', 'youtube', 'skype', 'watch',
+                'facebook', 'sage', 'line', 'psid', 'psnid', 
+                'bb2ch', 'gp01', 'gp02', 'adsl']
+        lowerid = id.lower()
+        if lowerid in list:
+            return False
+        # その他正規表現で判定
+        return self.re_frequent.search(id) == None
+    
+    def get_psn_id_list_from_text(self, text):
+
 def is_valid_id(id):
     u"""
         有効な PSN ID か判定する
@@ -24,6 +48,12 @@ def is_valid_id(id):
     p = re.compile('^(ww+)|^(ll+)|^(ee+)|^(TUEE+)|^(HP[0-9]+)|^(AM([0-9]){1,2}$)|^(PM([0-9]){1,2}$)')
     return p.search(id) == None
 
+def get_psn_id_list_from_text(text):
+    u"""
+        テキストから ID らしいものを抽出し返す
+    """
+    ddtext = r.sub('', dd.text)
+    
 def get_user_list_at_html(html):
     u"""
         スレッドの URL から HTML を取得し、パースする
