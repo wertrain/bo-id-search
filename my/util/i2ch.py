@@ -6,7 +6,10 @@ u"""
 """
 import urllib2
 import json
+import re
 from datetime import datetime
+from my.util import psn
+from bs4 import BeautifulSoup
 
 def get_boards():
     u"""
@@ -93,7 +96,7 @@ def parse_thread_html(url):
     html = urllib2.urlopen(url).read()
     utf8text = unicode(html, 'shift-jis').encode('utf-8')
 
-def parse_dt_text(dttext):
+def __parse_dt_text(dttext):
     u"""
         HTMLタグ dt の行から レス番号/名前/ID/時刻 をパースし、オブジェクトとして返す
     """
@@ -106,3 +109,20 @@ def parse_dt_text(dttext):
         'id': unicode(info[2][3:], 'utf-8'), 
         'datetime': tdatetime
     }
+
+def get_user_list_at_html(html):
+    u"""
+        スレッドの URL から HTML を取得し、パースする
+    """
+    psnutil = psn.PSNUtil()
+    # ID:*** , URL の削除
+    r = re.compile('((?<=ID:)([a-zA-Z0-9\_-]){6,10})|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)')
+    all_id = []
+    bs = BeautifulSoup(html)
+    for dt in bs.find_all('dt'):
+        info = __parse_dt_text(dt.text.encode('utf-8', 'ignore'))
+        print info['datetime']
+        dd = dt.findNextSibling('dd')
+        ddtext = r.sub('', dd.text)
+        all_id += psnutil.get_psn_id_list_from_text(ddtext)
+    return all_id
