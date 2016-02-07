@@ -12,6 +12,7 @@ class Thread (db.Model):
     """
     id = db.StringProperty()
     host_url = db.StringProperty()
+    response_num = db.IntegerProperty()
 
 class Response (db.Model):
     u"""

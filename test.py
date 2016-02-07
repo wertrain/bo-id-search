@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 import sys, os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/lib')
-
-from my.util import i2ch
+import codecs
+import urllib2
+from my.util import psn
+from bs4 import BeautifulSoup
 
 if __name__ == '__main__':
-    f = open('test.html')
-    html = f.read().decode('shift_jis', 'ignore')
-    f.close()
-
-    ids = i2ch.get_user_list_at_html(html)
-    for id in ids:
-        print id
+    html = urllib2.urlopen('http://yomogi.2ch.net/test/read.cgi/net/1453345266').read()
+    print html
