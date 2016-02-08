@@ -118,8 +118,8 @@ def get_user_list_from_html(html):
     # ID:*** , URL の削除
     r = re.compile('((?<=ID:)([a-zA-Z0-9\_-]){6,10})|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)')
     all_id = []
-    # <dd> の閉じタグが抜けているので適当な対策
-    html = html.replace('<dd>', '</dt><dd>').decode('shift_jis', 'ignore')
+    # <dt>, <dd> の閉じタグが抜けているので適当な対策
+    html = html.replace('<dd>', '</dt><dd>').replace('<br><br>\n', '</dd><br><br>\n').decode('shift_jis', 'ignore')
     bs = BeautifulSoup(html)
     for dt in bs.find_all('dt'):
         info = __parse_dt_text(dt.text.encode('utf-8', 'ignore'))
