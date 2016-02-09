@@ -89,23 +89,20 @@ def search_thread_list(category, title, thread):
             })
     return result
 
-def parse_thread_html(url):
-    u"""
-        スレッドの URL から HTML を取得し、パースする
-    """
-    html = urllib2.urlopen(url).read()
-    utf8text = unicode(html, 'shift-jis').encode('utf-8')
-
-def __parse_dt_text(dttext):
+def parse_dt(dt):
     u"""
         HTMLタグ dt の行から レス番号/名前/ID/時刻 をパースし、オブジェクトとして返す
     """
+    dttext = dt.text.encode('utf-8', 'ignore')
     base = dttext.split('：')
     info = base[2].split()
     tdatetime = datetime.strptime(info[0][:10] + ' ' + info[1][:8], '%Y/%m/%d %H:%M:%S')
+    a = dt.find('a')
+    mail = '' if a is None else a.get("href")[7:]
     return {
         'number': unicode(base[0], 'utf-8'), 
         'name': unicode(base[1], 'utf-8', 'ignore'),
+        'mail': mail,
         'id': unicode(info[2][3:], 'utf-8'), 
         'datetime': tdatetime
     }
@@ -122,7 +119,7 @@ def get_user_list_from_html(html):
     html = html.replace('<dd>', '</dt><dd>').replace('<br><br>\n', '</dd><br><br>\n').decode('shift_jis', 'ignore')
     bs = BeautifulSoup(html)
     for dt in bs.find_all('dt'):
-        info = __parse_dt_text(dt.text.encode('utf-8', 'ignore'))
+        info = parse_dt(dt)
         #print info['datetime']
         dd = dt.findNextSibling('dd')
         ddtext = r.sub('', dd.text)
@@ -131,7 +128,7 @@ def get_user_list_from_html(html):
 
 def download_html(url):
     u"""
-        スレッドの URL から HTML を取得し、パースする
+        URL から HTML を取得する
     """
     html = urllib2.urlopen(url).read()
     return html
