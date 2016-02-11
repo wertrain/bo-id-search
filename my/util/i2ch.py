@@ -98,7 +98,7 @@ def parse_dt(dt):
     info = base[2].split()
     tdatetime = datetime.strptime(info[0][:10] + ' ' + info[1][:8], '%Y/%m/%d %H:%M:%S')
     a = dt.find('a')
-    mail = '' if a is None else a.get("href")[7:]
+    mail = '' if a is None else a.get('href')[7:]
     return {
         'number': unicode(base[0], 'utf-8'), 
         'name': unicode(base[1], 'utf-8', 'ignore'),
