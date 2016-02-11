@@ -114,17 +114,20 @@ def get_user_list_from_html(html):
     psnutil = psn.PSNUtil()
     # ID:*** , URL の削除
     r = re.compile('((?<=ID:)([a-zA-Z0-9\_-]){6,10})|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)')
-    all_id = []
+    result = []
     # <dt>, <dd> の閉じタグが抜けているので適当な対策
     html = html.replace('<dd>', '</dt><dd>').replace('<br><br>\n', '</dd><br><br>\n').decode('shift_jis', 'ignore')
     bs = BeautifulSoup(html)
     for dt in bs.find_all('dt'):
         info = parse_dt(dt)
-        #print info['datetime']
         dd = dt.findNextSibling('dd')
         ddtext = r.sub('', dd.text)
-        all_id += psnutil.get_psn_id_list_from_text(ddtext)
-    return all_id
+        ids = psnutil.get_psn_id_list_from_text(ddtext)
+        result.append({
+            'response': info,
+            'ids': ids,
+        })
+    return result
 
 def download_html(url):
     u"""
