@@ -11,7 +11,8 @@ class Thread (db.Model):
         スレッドを表すデータモデル
     """
     id = db.StringProperty()
-    host_url = db.StringProperty()
+    url = db.StringProperty()
+    title = db.StringProperty()
     response_num = db.IntegerProperty()
 
 class Response (db.Model):
@@ -19,7 +20,7 @@ class Response (db.Model):
         レスを表すデータモデル
     """
     number = db.IntegerProperty()
-    name = db.StringProperty()
+    author = db.StringProperty()
     mail = db.StringProperty()
     body = db.StringProperty()
     thread = db.ReferenceProperty(Thread)
@@ -36,14 +37,20 @@ class PSNUser (db.Model):
 
 def create_response(param):
     response = Response()
-    response.number = int(param['number'])
-        'number': unicode(base[0], 'utf-8'), 
-        'name': unicode(base[1], 'utf-8', 'ignore'),
-        'id': unicode(info[2][3:], 'utf-8'), 
-        'datetime': tdatetime
-        
+    response.number = param.get('number')
+    response.author = param.get('author')
+    response.mail = param.get('mail')
+    response.body = param.get('body')
+    response.thread = param.get('thread')
+    response.at = param.get('at')
+    response.put()
+    return response
+
+def get_psn_user(id):
+    return db.Query(PSNUser).filter('id =', id).get()
+
 def update_psn_user(id, key):
-    user = db.Query(PSNUser).filter('id =', id).get()
+    user = get_psn_user(id)
     if user == None:
         user = PSNUser()
     user.id = id
@@ -51,3 +58,17 @@ def update_psn_user(id, key):
     user.responses.append(key)
     user.put()
     return user
+
+def get_thread(id):
+    return db.Query(Thread).filter('id =', id).get()
+
+def update_thread(id, param):
+    thread = get_thread(id)
+    if thread == None:
+        thread = Thread()
+    thread.id = id
+    thread.url = param.get('url')
+    thread.response_num = param.get('response_num')
+    thread.title = param.get('title')
+    thread.put()
+    return thread

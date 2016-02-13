@@ -86,6 +86,7 @@ def search_thread_list(category, title, thread):
             result.append({
                 'title': splitline[1],
                 'url': 'http://' + target_board['host'] + '/test/read.cgi/' + target_board['name'] + '/' + dat_value,
+                'id': dat_value
             })
     return result
 
@@ -121,6 +122,7 @@ def get_user_list_from_html(html):
     for dt in bs.find_all('dt'):
         info = parse_dt(dt)
         dd = dt.findNextSibling('dd')
+        info['body'] = str(dd)
         ddtext = r.sub('', dd.text)
         ids = psnutil.get_psn_id_list_from_text(ddtext)
         result.append({
