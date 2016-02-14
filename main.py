@@ -68,13 +68,18 @@ def update():
             })
             for id in user['ids']:
                 datastore.update_psn_user(id, response_data.key())
-        datastore.update_thread({
+        datastore.update_thread(thread['id'], {
             'url': thread['url'],
             'response_num': last_response,
             'title': thread['title']
         });
     return 'updated.'
-    
+
+@app.route('/delete')
+def delete_all():
+    datastore.delete_all()
+    return 'deleted.'
+
 @app.errorhandler(404)
 def page_not_found(e):
     """Return a custom 404 error."""

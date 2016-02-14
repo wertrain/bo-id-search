@@ -22,7 +22,7 @@ class Response (db.Model):
     number = db.IntegerProperty()
     author = db.StringProperty()
     mail = db.StringProperty()
-    body = db.StringProperty()
+    body = db.TextProperty()
     thread = db.ReferenceProperty(Thread)
     at = db.DateTimeProperty(auto_now_add=False)
 #    users = db.ListProperty(db.Key, default=[])
@@ -32,7 +32,7 @@ class PSNUser (db.Model):
         PSN ユーザーを表すデータモデル
     """
     id = db.StringProperty()
-    count = db.IntegerProperty()
+    count = db.IntegerProperty(default=0)
     responses = db.ListProperty(db.Key, default=[])
 
 def create_response(param):
@@ -62,7 +62,7 @@ def update_psn_user(id, key):
 def get_thread(id):
     return db.Query(Thread).filter('id =', id).get()
 
-def update_thread(id, param):
+def update_thread(id, param={}):
     thread = get_thread(id)
     if thread == None:
         thread = Thread()
@@ -72,3 +72,11 @@ def update_thread(id, param):
     thread.title = param.get('title')
     thread.put()
     return thread
+
+def delete_all():
+    for thread in Thread.all():
+        thread.delete()
+    for response in Response.all():
+        response.delete()
+    for user in PSNUser.all():
+        user.delete()

@@ -122,7 +122,7 @@ def get_user_list_from_html(html):
     for dt in bs.find_all('dt'):
         info = parse_dt(dt)
         dd = dt.findNextSibling('dd')
-        info['body'] = str(dd)
+        info['body'] = dd.text
         ddtext = r.sub('', dd.text)
         ids = psnutil.get_psn_id_list_from_text(ddtext)
         result.append({
