@@ -83,10 +83,16 @@ def search_thread_list(category, title, thread):
         splitline = line.split('<>')
         if thread.decode('utf-8') in splitline[1]:
             dat_value = splitline[0].replace('.dat', '')
+            # タイトルは
+            # 機動戦士ガンダムバトルオペレーション晒しスレ108 [無断転載禁止]©2ch.net	(618)
+            # こんな感じになっているので分離する
+            splittitle = splitline[1].split('\t')
+            
             result.append({
-                'title': splitline[1],
+                'title': splittitle[0],
                 'url': 'http://' + target_board['host'] + '/test/read.cgi/' + target_board['name'] + '/' + dat_value,
-                'id': dat_value
+                'id': dat_value,
+                'response_num': int(splittitle[1][2:-1])
             })
     return result
 
@@ -108,6 +114,18 @@ def parse_dt(dt):
         'datetime': tdatetime
     }
 
+def __text_with_newlines(element):
+    u"""
+        <br> を改行に置き換えて返す
+    """
+    text = ''
+    for e in element.recursiveChildGenerator():
+        if isinstance(e, basestring):
+            text += e.strip()
+        elif e.name == 'br':
+            text += '\n'
+    return text
+
 def get_user_list_from_html(html):
     u"""
         スレッドの URL から HTML を取得し、パースする
@@ -122,7 +140,7 @@ def get_user_list_from_html(html):
     for dt in bs.find_all('dt'):
         info = parse_dt(dt)
         dd = dt.findNextSibling('dd')
-        info['body'] = dd.text
+        info['body'] = __text_with_newlines(dd)
         ddtext = r.sub('', dd.text)
         ids = psnutil.get_psn_id_list_from_text(ddtext)
         result.append({

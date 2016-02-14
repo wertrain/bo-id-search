@@ -16,6 +16,12 @@ def hello():
     """Return a friendly HTTP greeting."""
     return 'Hello World!'
 
+@app.route('/test')
+def test():
+    thread_list = i2ch.search_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し')
+    for thread in thread_list:
+        return str(thread['response_num'])
+
 @app.route('/update')
 def update():
     #thread_list = i2ch.search_thread_list('ゲーム', 'ロボットゲー', 'バトルオペレーション晒し')
@@ -57,6 +63,9 @@ def update():
             if response_num < checked_response:
                 continue
             last_response = response_num
+            # ID が含まれないレスはスキップ
+            if len(user['ids']) == 0:
+                continue
             # 新しいレスの保存
             response_data = datastore.create_response({
                 'number': response_num,
