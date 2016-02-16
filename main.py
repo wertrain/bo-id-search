@@ -20,7 +20,7 @@ def hello():
 def test():
     thread_list = i2ch.search_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し')
     for thread in thread_list:
-        return str(thread['response_num'])
+        return (thread['title'])
 
 @app.route('/update')
 def update():
