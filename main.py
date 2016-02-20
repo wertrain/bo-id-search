@@ -51,9 +51,9 @@ def update():
         # データストアにスレッドの情報が保存されているかチェックする
         thread_data = datastore.get_thread(thread['id'])
         checked_response = 0
-        if thread_data is None:
-            thread_data = datastore.update_thread(thread['id']);
-        checked_response = thread_data.response_num
+        #if thread_data is None:
+        #    thread_data = datastore.update_thread(thread['id']);
+        #checked_response = thread_data.response_num
         
         last_response = 0
         users = result['user_list']
