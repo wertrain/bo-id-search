@@ -6,7 +6,7 @@ from my.util import i2ch
 from my.db import datastore
 from google.appengine.api import memcache
 
-from flask import Flask
+from flask import Flask, render_template
 app = Flask(__name__)
 # Note: We don't need to call run() since our application is embedded within
 # the App Engine WSGI application server.
@@ -15,6 +15,10 @@ app = Flask(__name__)
 def hello():
     """Return a friendly HTTP greeting."""
     return 'Hello World!'
+
+@app.route('/index')
+def index():
+    return render_template('index.html')
 
 @app.route('/test')
 def test():
@@ -51,9 +55,9 @@ def update():
         # データストアにスレッドの情報が保存されているかチェックする
         thread_data = datastore.get_thread(thread['id'])
         checked_response = 0
-        #if thread_data is None:
-        #    thread_data = datastore.update_thread(thread['id']);
-        #checked_response = thread_data.response_num
+        if thread_data is None:
+            thread_data = datastore.update_thread(thread['id']);
+        checked_response = thread_data.response_num
         
         last_response = 0
         users = result['user_list']
