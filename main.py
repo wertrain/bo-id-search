@@ -12,12 +12,8 @@ app = Flask(__name__)
 # the App Engine WSGI application server.
 
 @app.route('/')
-def hello():
-    """Return a friendly HTTP greeting."""
-    return 'Hello World!'
-
-@app.route('/index')
-def index():
+def top():
+    """ トップページを表示する """
     return render_template('index.html')
 
 @app.route('/test')
