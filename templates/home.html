@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+      <div class="well">
+        <fieldset>
+          <legend>PSN ID を検索</legend>
+          <ul class="ul-explain">
+            <li>文字を入力すると候補が表示されます。</li>
+            <li>IDの入力後、検索ボタンを押すと内容を確認できます。</li>
+          </ul>
+
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="PSN ID">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button">検索</button>
+            </span>
+          </div>
+       </fieldset>
+      </div>
+{% endblock %}
