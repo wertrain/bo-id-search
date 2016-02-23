@@ -14,7 +14,7 @@ app = Flask(__name__)
 @app.route('/')
 def top():
     """ トップページを表示する """
-    return render_template('index.html')
+    return render_template('home.html')
 
 @app.route('/test')
 def test():

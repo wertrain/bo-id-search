@@ -1,20 +1,60 @@
 {% extends "base.html" %}
 
-{% block content %}
-      <div class="well">
-        <fieldset>
-          <legend>PSN ID を検索</legend>
-          <ul class="ul-explain">
-            <li>文字を入力すると候補が表示されます。</li>
-            <li>IDの入力後、検索ボタンを押すと内容を確認できます。</li>
-          </ul>
+{% block style %}
+    <style>
+    /* suggest.js */
+    #suggest {
+        position: absolute;
+        background-color: #FFFFFF;
+        border: 2px solid #CCCCFF;
+        font-size: 130%;
+        width: 400px;
+    }
+    #suggest div {
+        display: block;
+        width: 200px;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    #suggest div.select{ /* キー上下で選択した場合のスタイル */
+        color: #FFFFFF;
+        background-color: #3366FF;
+    }
+    #suggest div.over{ /* マウスオーバ時のスタイル */
+        background-color: #99CCFF;
+    }
+    </style>
+{% endblock %}
 
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="PSN ID">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="button">検索</button>
-            </span>
-          </div>
-       </fieldset>
-      </div>
+{% block content %}
+    <div class="well">
+      <fieldset>
+        <legend>PSN ID を検索</legend>
+        <ul class="ul-explain">
+          <li>文字を入力すると候補が表示されます。</li>
+          <li>IDの入力後、検索ボタンを押すと内容を確認できます。</li>
+        </ul>
+
+        <div class="input-group">
+          <input type="text" id="psnid" autocomplete="off" class="form-control" placeholder="PSN ID">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button">検索</button>
+          </span>
+        </div>
+        <!-- 補完候補を表示するエリア -->
+        <div id="suggest" style="display:none;"></div>
+     </fieldset>
+    </div>
+{% endblock %}
+
+{% block script %}
+  <script src="static/vender/js/suggest.min.js"></script>
+  <script>
+  <!--
+    // wondowのonloadイベントでSuggestを生成
+    var list = ['aa', 'bb', 'ccc', 'minaimai', 'minami'];
+    var start = function(){new Suggest.Local('psnid', 'suggest', list, {dispMax: 10, highlight: true});};
+    window.addEventListener ? window.addEventListener('load', start, false) : window.attachEvent('onload', start);
+  //-->
+  </script>
 {% endblock %}
