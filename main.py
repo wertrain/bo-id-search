@@ -14,7 +14,17 @@ app = Flask(__name__)
 @app.route('/')
 def top():
     """ トップページを表示する """
-    return render_template('home.html')
+    return render_template('home.html', page_type=0)
+
+@app.route('/ranking')
+def ranking():
+    """ ランキングページを表示する """
+    return render_template('ranking.html', page_type=1)
+
+@app.route('/about')
+def about():
+    """ アバウトページを表示する """
+    return render_template('about.html', page_type=2)
 
 @app.route('/test')
 def test():
