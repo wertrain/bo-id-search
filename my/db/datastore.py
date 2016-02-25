@@ -73,6 +73,12 @@ def update_thread(id, param={}):
     thread.put()
     return thread
 
+def get_all_ids():
+    ids = []
+    for user in PSNUser.all().order('-count'):
+        ids.append(user.id)
+    return ids
+
 def delete_all():
     for thread in Thread.all():
         thread.delete()

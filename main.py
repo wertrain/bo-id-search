@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import urllib2
+import json
 
 from bs4 import BeautifulSoup
 from my.util import i2ch
@@ -25,6 +26,16 @@ def ranking():
 def about():
     """ アバウトページを表示する """
     return render_template('about.html', page_type=2)
+
+@app.route('/userlist.js')
+def userlistjs():
+    """ ユーザー一覧を JavaScript の変数として出力する """
+    memcache_key = 'userlistjs';
+    ids = memcache.get(memcache_key)
+    if ids is None:
+        ids = json.dumps(datastore.get_all_ids(), indent=0)
+        memcache.add(memcache_key, ids, 60 * 60 * 24)
+    return 'var userlist = ' + ids + ';';
 
 @app.route('/test')
 def test():
