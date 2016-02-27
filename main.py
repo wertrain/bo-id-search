@@ -65,7 +65,9 @@ def update():
             'thread': thread,
             'user_list': i2ch.get_user_list_from_html(html)
         })
-    
+
+    entries_id = []
+    entries_response = []
     for result in results:
         # スレッド情報を取得
         thread = result['thread']
@@ -88,16 +90,30 @@ def update():
             if len(user['ids']) == 0:
                 continue
             # 新しいレスの保存
-            response_data = datastore.create_response({
+            #response_data = datastore.create_response({
+            #    'number': response_num,
+            #    'author': user['response']['name'],
+            #    'mail': user['response']['mail'],
+            #    'body': user['response']['body'],
+            #    'thread': thread_data,
+            #    'at': user['response']['datetime']
+            #})
+            entries_response.append({
                 'number': response_num,
                 'author': user['response']['name'],
                 'mail': user['response']['mail'],
                 'body': user['response']['body'],
-                'thread': thread_data,
-                'at': user['response']['datetime']
+                'thread': thread['id'],
+                'at': user['response']['datetime'].isoformat()
             })
             for id in user['ids']:
-                datastore.update_psn_user(id, response_data.key())
+                #datastore.update_psn_user(id, response_data.key())
+                entries_id.append({
+                    'id': id,
+                    'thread': thread['id'],
+                    'response': response_num
+                })
+        datastore.add_task(entries_id, entries_response)
         datastore.update_thread(thread['id'], {
             'url': thread['url'],
             'response_num': last_response,

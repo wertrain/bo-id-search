@@ -4,6 +4,7 @@ u"""
     __author__ = 'wertrain'
     __version__ = '0.1'
 """
+import json
 from google.appengine.ext import db
 
 class Thread (db.Model):
@@ -34,6 +35,10 @@ class PSNUser (db.Model):
     id = db.StringProperty()
     count = db.IntegerProperty(default=0)
     responses = db.ListProperty(db.Key, default=[])
+
+class TaskEntries  (db.Model):
+    ids = db.TextProperty(default='')
+    responses = db.TextProperty(default='')
 
 def create_response(param):
     response = Response()
@@ -73,6 +78,19 @@ def update_thread(id, param={}):
     thread.put()
     return thread
 
+def add_task(new_ids, new_responses):
+    task = db.Query(TaskEntries).get()
+    if task == None:
+        task = TaskEntries()
+    
+    ids = [] if len(task.ids) == 0 else json.loads(task.ids)
+    ids.extend(new_ids)
+    task.ids = json.dumps(ids)
+    responses = [] if len(task.responses) == 0 else json.loads(task.responses)
+    responses.extend(new_responses)
+    task.responses = json.dumps(responses)
+    task.put()
+
 def get_all_ids():
     ids = []
     for user in PSNUser.all().order('-count'):
@@ -86,3 +104,5 @@ def delete_all():
         response.delete()
     for user in PSNUser.all():
         user.delete()
+    for task in TaskEntries.all():
+        task.delete()
