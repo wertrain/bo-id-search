@@ -1,136 +1,32 @@
 # -*- coding: utf-8 -*-
-import urllib2
-import json
-
-from bs4 import BeautifulSoup
-from my.util import i2ch
-from my.db import datastore
-from google.appengine.api import memcache
+from api import apis
 
 from flask import Flask, render_template
 app = Flask(__name__)
+app.register_blueprint(apis)
+
 # Note: We don't need to call run() since our application is embedded within
 # the App Engine WSGI application server.
 
 @app.route('/')
 def top():
-    """ トップページを表示する """
+    """トップページを表示する"""
     return render_template('home.html', page_type=0)
 
 @app.route('/ranking')
 def ranking():
-    """ ランキングページを表示する """
+    """ランキングページを表示する"""
     return render_template('ranking.html', page_type=1)
 
 @app.route('/about')
 def about():
-    """ アバウトページを表示する """
+    """このサイトについてページを表示する"""
     return render_template('about.html', page_type=2)
-
-@app.route('/userlist.js')
-def userlistjs():
-    """ ユーザー一覧を JavaScript の変数として出力する """
-    memcache_key = 'userlistjs';
-    ids = memcache.get(memcache_key)
-    if ids is None:
-        ids = json.dumps(datastore.get_all_ids(), indent=0)
-        memcache.add(memcache_key, ids, 60 * 60 * 24)
-    return 'var userlist = ' + ids + ';';
-
-@app.route('/test')
-def test():
-    thread_list = i2ch.search_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し')
-    for thread in thread_list:
-        return (thread['title'])
-
-@app.route('/update')
-def update():
-    #thread_list = i2ch.search_thread_list('ゲーム', 'ロボットゲー', 'バトルオペレーション晒し')
-    #thread_list = i2ch.search_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し')
-    #for thread in thread_list:
-    #    memcache_key = thread['url']
-    #    data = memcache.get(memcache_key)
-    #    if data is None:
-    #        count = thread['url']
-    #    memcache.add(memcache_key, str(count), 60 * 60 * 24)
-    thread_list = i2ch.search_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し')
-    results = []
-    for thread in thread_list:
-        memcache_key = thread['url']
-        html = memcache.get(memcache_key)
-        if html is None:
-            html = i2ch.download_html(thread['url'])
-            memcache.add(memcache_key, html, 60 * 60 * 24)
-        results.append({
-            'thread': thread,
-            'user_list': i2ch.get_user_list_from_html(html)
-        })
-
-    entries_id = []
-    entries_response = []
-    for result in results:
-        # スレッド情報を取得
-        thread = result['thread']
-        # データストアにスレッドの情報が保存されているかチェックする
-        thread_data = datastore.get_thread(thread['id'])
-        checked_response = 0
-        if thread_data is None:
-            thread_data = datastore.update_thread(thread['id']);
-        checked_response = thread_data.response_num
-        
-        last_response = 0
-        users = result['user_list']
-        for user in users:
-            response_num = int(user['response']['number'])
-            # まだ未チェックのレス番までスキップする
-            if response_num < checked_response:
-                continue
-            last_response = response_num
-            # ID が含まれないレスはスキップ
-            if len(user['ids']) == 0:
-                continue
-            # 新しいレスの保存
-            #response_data = datastore.create_response({
-            #    'number': response_num,
-            #    'author': user['response']['name'],
-            #    'mail': user['response']['mail'],
-            #    'body': user['response']['body'],
-            #    'thread': thread_data,
-            #    'at': user['response']['datetime']
-            #})
-            entries_response.append({
-                'number': response_num,
-                'author': user['response']['name'],
-                'mail': user['response']['mail'],
-                'body': user['response']['body'],
-                'thread': thread['id'],
-                'at': user['response']['datetime'].isoformat()
-            })
-            for id in user['ids']:
-                #datastore.update_psn_user(id, response_data.key())
-                entries_id.append({
-                    'id': id,
-                    'thread': thread['id'],
-                    'response': response_num
-                })
-        datastore.add_task(entries_id, entries_response)
-        datastore.update_thread(thread['id'], {
-            'url': thread['url'],
-            'response_num': last_response,
-            'title': thread['title']
-        });
-    return 'updated.'
-
-@app.route('/delete')
-def delete_all():
-    datastore.delete_all()
-    return 'deleted.'
 
 @app.errorhandler(404)
 def page_not_found(e):
     """Return a custom 404 error."""
     return 'Sorry, Nothing at this URL.', 404
-
 
 @app.errorhandler(500)
 def application_error(e):

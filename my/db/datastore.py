@@ -37,7 +37,6 @@ class PSNUser (db.Model):
     responses = db.ListProperty(db.Key, default=[])
 
 class TaskEntries  (db.Model):
-    ids = db.TextProperty(default='')
     responses = db.TextProperty(default='')
 
 def create_response(param):
@@ -64,6 +63,17 @@ def update_psn_user(id, key):
     user.put()
     return user
 
+def increment_user_count(id, keys):
+    user = get_psn_user(id)
+    if user == None:
+        user = PSNUser()
+    user.id = id
+    user.count = user.count + len(keys)
+    for key in keys:
+        user.responses.append(key)
+    user.put()
+    return user
+
 def get_thread(id):
     return db.Query(Thread).filter('id =', id).get()
 
@@ -78,18 +88,28 @@ def update_thread(id, param={}):
     thread.put()
     return thread
 
-def add_task(new_ids, new_responses):
+def add_entry_task(new_responses):
     task = db.Query(TaskEntries).get()
     if task == None:
         task = TaskEntries()
-    
-    ids = [] if len(task.ids) == 0 else json.loads(task.ids)
-    ids.extend(new_ids)
-    task.ids = json.dumps(ids)
     responses = [] if len(task.responses) == 0 else json.loads(task.responses)
     responses.extend(new_responses)
     task.responses = json.dumps(responses)
     task.put()
+
+def set_entry_task(new_responses):
+    task = db.Query(TaskEntries).get()
+    if task == None:
+        task = TaskEntries()
+    task.responses = json.dumps(new_responses)
+    task.put()
+
+def get_entry_task():
+    task = db.Query(TaskEntries).get()
+    if task == None:
+        task = TaskEntries()
+    responses = [] if len(task.responses) == 0 else json.loads(task.responses)
+    return responses
 
 def get_all_ids():
     ids = []
