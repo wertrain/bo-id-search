@@ -117,6 +117,9 @@ def get_all_ids():
         ids.append(user.id)
     return ids
 
+def get_response_from_key(key):
+    return db.get(key)
+
 def delete_all():
     for thread in Thread.all():
         thread.delete()

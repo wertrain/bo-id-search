@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from api import apis
 
-from flask import Flask, render_template
+from my.db import datastore
+from flask import Flask, render_template, send_from_directory
 app = Flask(__name__)
 app.register_blueprint(apis)
 
@@ -22,6 +23,17 @@ def ranking():
 def about():
     """このサイトについてページを表示する"""
     return render_template('about.html', page_type=2)
+
+@app.route('/id/<psnid>')
+def search(psnid):
+    """ID 詳細を表示する"""
+    user = datastore.get_psn_user(psnid)
+    param = []
+    if user is not None:
+        for key in user.responses[:5]:
+            response = datastore.get_response_from_key(key)
+            param.append(response)
+    return render_template('id.html', param=param, page_type=0)
 
 @app.errorhandler(404)
 def page_not_found(e):
