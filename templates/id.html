@@ -7,6 +7,21 @@
 
 {% block content %}
 
+{% if user is not none %}
+
+    <div class="alert alert-success" role="alert">
+      {{ user.count }}件見つかりました。最新の{{params|length}}件を表示します。
+    </div>
+
+{% for param in params %}
+    <div class="well">{{ param.body }}</div>
+{% endfor %}
+
+{% else %}
+    <div class="alert alert-warning" role="alert">
+      <strong>{{ user.id }}</strong> というユーザーは見つかりませんでした。
+    </div>
+{%endif %}
 
 {% endblock %}
 

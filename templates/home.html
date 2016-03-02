@@ -38,7 +38,7 @@
         <div class="input-group">
           <input type="text" id="psnid" autocomplete="off" class="form-control" placeholder="PSN ID">
           <span class="input-group-btn">
-            <button class="btn btn-default" type="button">検索</button>
+            <button class="btn btn-default" type="button" onclick="onClickSearchButton(psnid)">検索</button>
           </span>
         </div>
         <!-- 補完候補を表示するエリア -->
@@ -55,6 +55,11 @@
     // wondowのonloadイベントでSuggestを生成
     var start = function(){new Suggest.Local('psnid', 'suggest', userlist, {dispMax: 12, highlight: true});};
     window.addEventListener ? window.addEventListener('load', start, false) : window.attachEvent('onload', start);
+    
+    function onClickSearchButton(psnid) {
+        if (psnid.length <= 0) return;
+        window.location.href = '/id/' + psnid.value;
+    }
   //-->
   </script>
 {% endblock %}

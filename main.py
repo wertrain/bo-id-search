@@ -28,12 +28,13 @@ def about():
 def search(psnid):
     """ID 詳細を表示する"""
     user = datastore.get_psn_user(psnid)
-    param = []
+    params = []
     if user is not None:
         for key in user.responses[:5]:
             response = datastore.get_response_from_key(key)
-            param.append(response)
-    return render_template('id.html', param=param, page_type=0)
+            response.body = 'test<br>'
+            params.append(response)
+    return render_template('id.html', user=user, params=params, page_type=0)
 
 @app.errorhandler(404)
 def page_not_found(e):
