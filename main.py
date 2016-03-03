@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 from api import apis
 
 from my.db import datastore
@@ -8,7 +9,8 @@ app.register_blueprint(apis)
 
 # Note: We don't need to call run() since our application is embedded within
 # the App Engine WSGI application server.
-
+logging.getLogger().setLevel(logging.DEBUG)
+    
 @app.route('/')
 def top():
     """トップページを表示する"""
@@ -32,7 +34,6 @@ def search(psnid):
     if user is not None:
         for key in user.responses[:5]:
             response = datastore.get_response_from_key(key)
-            response.body = 'test<br>'
             params.append(response)
     return render_template('id.html', user=user, params=params, page_type=0)
 

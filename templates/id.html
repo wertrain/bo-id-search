@@ -14,7 +14,12 @@
     </div>
 
 {% for param in params %}
-    <div class="well">{{ param.body }}</div>
+    <div class="well">
+    {{ param.number }} ：<a href="mailto:sage"><b>{{ param.author }}</b></a>：{{ param.at.strftime('%Y/%m/%d %H:%M:%S') }} {{ param.authorid }}</br>
+    {% for line in param.body.splitlines() %}
+        {{ line }}</br>
+    {% endfor %}
+    </div>
 {% endfor %}
 
 {% else %}

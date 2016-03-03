@@ -20,6 +20,14 @@ def userlistjs():
         memcache.add(memcache_key, ids, 60 * 60 * 24)
     return 'var userlist = ' + ids + ';';
 
+@apis.route('/test')
+def test():
+    return i2ch.search_thread_list('ゲーム', 'ロボットゲー', 'バトルオペレーション晒し')
+
+@apis.route('/delete')
+def delete():
+    datastore.delete_all()
+
 @apis.route('/update')
 def update():
     """スレッドを取得し保存、タスク処理用のオブジェクトを作成する"""
@@ -71,6 +79,7 @@ def update():
                 'author': user['response']['name'],
                 'mail': user['response']['mail'],
                 'body': user['response']['body'],
+                'authorid': user['response']['id'],
                 'thread': thread['id'],
                 'at': user['response']['datetime'].strftime('%Y/%m/%d %H:%M:%S'),
                 'ids': user['ids']
@@ -105,6 +114,7 @@ def task():
             'author': entry['author'],
             'mail': entry['mail'],
             'body': entry['body'],
+            'authorid': entry['authorid'],
             'thread': thread,
             'at': datetime.strptime(entry['at'], '%Y/%m/%d %H:%M:%S')
         })

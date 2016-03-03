@@ -26,6 +26,7 @@ class Response (db.Model):
     body = db.TextProperty()
     thread = db.ReferenceProperty(Thread)
     at = db.DateTimeProperty(auto_now_add=False)
+    authorid = db.StringProperty()
 #    users = db.ListProperty(db.Key, default=[])
 
 class PSNUser (db.Model):
@@ -47,6 +48,7 @@ def create_response(param):
     response.body = param.get('body')
     response.thread = param.get('thread')
     response.at = param.get('at')
+    response.authorid = param.get('authorid')
     response.put()
     return response
 

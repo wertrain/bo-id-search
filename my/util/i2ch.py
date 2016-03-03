@@ -7,6 +7,7 @@ u"""
 import urllib2
 import json
 import re
+import logging
 from datetime import datetime
 from my.util import psn
 from bs4 import BeautifulSoup
@@ -80,6 +81,9 @@ def search_thread_list(category, title, thread):
     result = []
     list = unicodesubject.splitlines()
     for line in list:
+        if (line.count('<>') == 0):
+            logging.error(url + ': download failed.')
+            return None
         splitline = line.split('<>')
         if thread.decode('utf-8') in splitline[1]:
             dat_value = splitline[0].replace('.dat', '')
