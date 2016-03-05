@@ -22,19 +22,25 @@ def userlistjs():
 
 @apis.route('/test')
 def test():
-    return i2ch.search_thread_list('ゲーム', 'ロボットゲー', 'バトルオペレーション晒し')
+#    return i2ch.search_thread_list('ゲーム', 'ロボットゲー', 'バトルオペレーション晒し')
+    return str(i2ch.search_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し'))
 
 @apis.route('/delete')
 def delete():
     datastore.delete_all()
+    return 'delete.'
 
 @apis.route('/update')
 def update():
     """スレッドを取得し保存、タスク処理用のオブジェクトを作成する"""
     thread_list = []
-    thread_list.extend(i2ch.search_thread_list('ゲーム', 'ロボットゲー', 'バトルオペレーション晒し'))
-    thread_list.extend(i2ch.search_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し'))
-    
+    thread = i2ch.search_thread_list('ゲーム', 'ロボットゲー', 'バトルオペレーション晒し')
+    if thread is not None:
+        thread_list.extend(thread)
+    thread = i2ch.search_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し')
+    if thread is not None:
+        thread_list.extend(thread)
+
     results = []
     for thread in thread_list:
         html = i2ch.download_html(thread['url'])
@@ -50,10 +56,9 @@ def update():
         # データストアにスレッドの情報が保存されているかチェックする
         thread_data = datastore.get_thread(thread['id'])
         checked_response = 0
-        if thread_data is None:
-            thread_data = datastore.update_thread(thread['id']);
-        checked_response = thread_data.response_num
-        
+        if thread_data is not None:
+            checked_response = thread_data.response_num
+
         last_response = 0
         users = result['user_list']
         for user in users:
