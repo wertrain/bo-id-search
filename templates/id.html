@@ -11,7 +11,7 @@
 {% if user is not none %}
 
     <div class="alert alert-success" role="alert">
-      {{ user.count }}件見つかりました。最新の{{params|length}}件を表示します。
+      {{ user.count }}件見つかりました。最新の{{ params|length }}件を表示します。
     </div>
 
 {% for param in params %}

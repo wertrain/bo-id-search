@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
+    <meta name="description" content="このサイトは、2ちゃんねるの「機動戦士ガンダムバトルオペレーション晒しスレ」で言及された ID を集計し、検索しやすくしたサイトです。">
     <meta name="author" content="">
     <link rel="icon" href="/favicon.ico">
     <link rel="stylesheet" href="/static/css/style.css">
@@ -13,7 +13,7 @@
     {# 追加スタイルシート #}
     {% block style %}{% endblock %}
     
-    <title>バトオペ晒されID検索</title>
+    <title>バトオペ晒されID検索 Ver.2</title>
 </head>
 
 <body>
@@ -39,13 +39,11 @@
             <li {% if page_type == 2 %}class="active"{% endif %} class="dropdown">
               <a href="/about" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">このサイトについて <span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li><a href="/about">Action</a></li>
-                <li><a href="/about">Another action</a></li>
-                <li><a href="/about">Something else here</a></li>
+                <li><a href="/about">このサイトについて</a></li>
+                <li><a href="/about#how">ID の集計方法について</a></li>
                 <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
+                <li class="dropdown-header">集計情報</li>
+                <li><a href="/about">登録IDとスレッド</a></li>
               </ul>
             </li>
           </ul>
