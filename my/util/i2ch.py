@@ -107,7 +107,7 @@ def parse_dt(dt):
     dttext = dt.text.encode('utf-8', 'ignore')
     base = dttext.split('：')
     info = base[2].split()
-    tdatetime = datetime.strptime(info[0][:10] + ' ' + info[1][:8], '%Y/%m/%d %H:%M:%S')
+    tdatetime = datetime.strptime(info[0][:10] + ' ' + info[1][:11], '%Y/%m/%d %H:%M:%S.%f')
     a = dt.find('a')
     mail = '' if a is None else a.get('href')[7:]
     return {

@@ -2,6 +2,7 @@
 
 {% block style %}
     <style>
+      strong { color: #ff0000; font-size: larger; }
     </style>
 {% endblock %}
 
@@ -15,10 +16,19 @@
 
 {% for param in params %}
     <div class="well">
-    {{ param.number }} ：<a href="mailto:sage"><b>{{ param.author }}</b></a>：{{ param.at.strftime('%Y/%m/%d %H:%M:%S') }} {{ param.authorid }}</br>
-    {% for line in param.body.splitlines() %}
-        {{ line }}</br>
-    {% endfor %}
+      <p><a href="{{ param.thread.url }}/{{ param.number }}">{{ param.thread.title|safe }}</a></p>
+      {{ param.number }} ：
+      
+      {% if param.mail|length == 0 %}
+        <font color="green"><b>{{ param.author }}</b></font>
+      {% else %}
+        <a href="mailto:{{ param.mail }}"><b>{{ param.author }}</b></a>
+      {% endif %}
+      
+      ：{{ param.at.strftime('%Y/%m/%d(%a) %H:%M:%S.%f')[:-4] }} ID:{{ param.authorid }}</br>
+      {% for line in param.body.splitlines() %}
+          {{ line|replace_id(user.id) }}</br>
+      {% endfor %}
     </div>
 {% endfor %}
 
@@ -26,7 +36,7 @@
     <div class="alert alert-warning" role="alert">
       <strong>{{ user.id }}</strong> というユーザーは見つかりませんでした。
     </div>
-{%endif %}
+{% endif %}
 
 {% endblock %}
 

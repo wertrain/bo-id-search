@@ -113,6 +113,15 @@ def get_entry_task():
     responses = [] if len(task.responses) == 0 else json.loads(task.responses)
     return responses
 
+def get_ranking(limit=50):
+    users = []
+    for user in db.Query(PSNUser).order('-count').fetch(limit=limit):
+        users.append({
+            'id': user.id,
+            'count': user.count
+        })
+    return users
+
 def get_all_ids():
     ids = []
     for user in PSNUser.all().order('-count'):

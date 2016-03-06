@@ -1,6 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="well">
-    </div>
+  <table class="table table-bordered table-striped table-responsive">
+    <thead>
+      <tr>
+        <th>順位</th>
+        <th>PSN ID</th>
+        <th>言及回数</th>
+      </tr>
+    </thead>
+    <tbody>
+  {% for user in users %}
+      <tr>
+        <td class="col-xs-1">{{ loop.index }}位</td>
+        <td class="col-xs-7"><a href="/id/{{ user.id }}">{{ user.id }}</a></td>
+        <td class="col-xs-2">{{ user.count }}回</td>
+      </tr>
+  {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}

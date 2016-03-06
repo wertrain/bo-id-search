@@ -7,8 +7,14 @@ from my.util import i2ch
 from my.db import datastore
 from google.appengine.api import memcache
 
-from flask import Blueprint
+from flask import Blueprint, Markup
 apis = Blueprint('apis', __name__)
+
+def replace_id(value, id):
+    """ID に strong タグを付けて強調する"""
+    result = value.replace(id, '<strong>' + id + '</strong>')
+    return Markup(result)
+apis.add_app_template_filter(replace_id)
 
 @apis.route('/userlist.js')
 def userlistjs():
@@ -23,7 +29,8 @@ def userlistjs():
 @apis.route('/test')
 def test():
 #    return i2ch.search_thread_list('ゲーム', 'ロボットゲー', 'バトルオペレーション晒し')
-    return str(i2ch.search_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し'))
+#    return str(i2ch.search_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し'))
+    return str(datastore.get_ranking(10))
 
 @apis.route('/delete')
 def delete():
@@ -86,7 +93,7 @@ def update():
                 'body': user['response']['body'],
                 'authorid': user['response']['id'],
                 'thread': thread['id'],
-                'at': user['response']['datetime'].strftime('%Y/%m/%d %H:%M:%S'),
+                'at': user['response']['datetime'].strftime('%Y/%m/%d %H:%M:%S.%f'),
                 'ids': user['ids']
             })
             #for id in user['ids']:
@@ -121,7 +128,7 @@ def task():
             'body': entry['body'],
             'authorid': entry['authorid'],
             'thread': thread,
-            'at': datetime.strptime(entry['at'], '%Y/%m/%d %H:%M:%S')
+            'at': datetime.strptime(entry['at'], '%Y/%m/%d %H:%M:%S.%f')
         })
         for id in entry['ids']:
             # このループで新規に追加された ID の場合、

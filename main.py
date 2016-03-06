@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 import logging
+import json
 from api import apis
 
 from my.db import datastore
 from flask import Flask, render_template, send_from_directory
+from google.appengine.api import memcache
+
 app = Flask(__name__)
 app.register_blueprint(apis)
 
@@ -19,7 +22,13 @@ def top():
 @app.route('/ranking')
 def ranking():
     """ランキングページを表示する"""
-    return render_template('ranking.html', page_type=1)
+    memcache_key = 'ranking';
+    users = memcache.get(memcache_key)
+    if users is None:
+        users = json.dumps(datastore.get_ranking(50), indent=0)
+        memcache.add(memcache_key, users, 60 * 60 * 24)
+    users = json.loads(users)
+    return render_template('ranking.html', page_type=1, users=users)
 
 @app.route('/about')
 def about():
