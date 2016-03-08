@@ -131,6 +131,12 @@ def get_all_ids():
 def get_response_from_key(key):
     return db.get(key)
 
+def get_all_psnuser_count():
+    return db.Query(PSNUser).count()
+
+def get_all_thread_count():
+    return db.Query(Thread).count()
+
 def delete_all():
     for thread in Thread.all():
         thread.delete()

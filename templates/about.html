@@ -34,4 +34,12 @@
       <small>※ PSN IDの最小文字数は3文字ですが、3文字で判定を行うとノイズが多くなってしまうので、最小4文字としています。</small>
     </div>
     <hr>
+    <div>
+      <a id="total"></a>
+      <h3>集計情報</h3>
+      <ul>
+          <li>最新スレッドを含む、過去 {{ counts.thread }} スレッドから集計</li>
+          <li>全登録ID {{ counts.user }} 個</li>
+      </ul>
+    </div>
 {% endblock %}

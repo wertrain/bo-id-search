@@ -33,7 +33,16 @@ def ranking():
 @app.route('/about')
 def about():
     """このサイトについてページを表示する"""
-    return render_template('about.html', page_type=2)
+    memcache_key = 'user_and_thread_count';
+    counts = memcache.get(memcache_key)
+    if counts is None:
+        counts = json.dumps({
+            'user': datastore.get_all_psnuser_count(),
+            'thread': datastore.get_all_thread_count()
+        }, indent=0)
+        memcache.add(memcache_key, counts, 60 * 60 * 24)
+    counts = json.loads(counts)
+    return render_template('about.html', page_type=2, counts=counts)
 
 @app.route('/id/<psnid>')
 def search(psnid):
