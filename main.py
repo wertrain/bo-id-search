@@ -4,7 +4,7 @@ import json
 from api import apis
 
 from my.db import datastore
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template
 from google.appengine.api import memcache
 
 app = Flask(__name__)
