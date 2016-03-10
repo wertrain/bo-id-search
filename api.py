@@ -26,12 +26,6 @@ def userlistjs():
         memcache.add(memcache_key, ids, 60 * 60 * 24)
     return 'var userlist = ' + ids + ';';
 
-@apis.route('/test')
-def test():
-#    return i2ch.search_thread_list('ゲーム', 'ロボットゲー', 'バトルオペレーション晒し')
-#    return str(i2ch.search_thread_list('ネット関係', 'ネットwatch', 'バトルオペレーション晒し'))
-    return str(datastore.get_ranking(10))
-
 @apis.route('/delete')
 def delete():
     datastore.delete_all()
