@@ -1,0 +1,10 @@
+cron:
+- description: スレッドを取得し、タスク処理用のテキストを保存する
+  url: /system/update
+  schedule: every 6 hours
+  timezone: Asia/Tokyo
+
+- description: タスク処理用のテキストを展開し、IDを保存する
+  url: /system/task
+  schedule: every 60 minutes
+  timezone: Asia/Tokyo

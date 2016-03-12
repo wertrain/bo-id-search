@@ -75,7 +75,7 @@ def search_thread_list(category, title, thread):
         return ''
     
     url = 'http://' + target_board['host'] + '/' + target_board['name'] + '/subject.txt'
-    subject = urllib2.urlopen(url).read()
+    subject = download_html(url)
     unicodesubject = unicode(subject, 'shift-jis', 'ignore')
 
     result = []
@@ -157,5 +157,24 @@ def download_html(url):
     u"""
         URL から HTML を取得する
     """
-    html = urllib2.urlopen(url).read()
-    return html
+    header = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+        'Accept-Encoding': 'none',
+        'Accept-Language': 'ja,en-US;q=0.8,en;q=0.6',
+        'Connection': 'keep-alive'
+    }
+    # http://stackoverflow.com/questions/17528759/how-to-fetch-a-url-by-proxy-on-google-app-engine
+    # Google App Engine 上では Proxy が使えないらしい
+    #proxy = urllib2.ProxyHandler({'http': '127.0.0.1'})
+    #opener = urllib2.build_opener(proxy)
+    #urllib2.install_opener(opener)
+    
+    request = urllib2.Request(url, headers=header)
+    content = ''
+    try:
+        content = urllib2.urlopen(request).read()
+    except urllib2.HTTPError, e:
+        logging.error(e.fp.read())
+    return content

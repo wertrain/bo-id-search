@@ -7,7 +7,7 @@ from my.db import datastore
 from flask import Flask, render_template
 from google.appengine.api import memcache
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.register_blueprint(apis)
 
 # Note: We don't need to call run() since our application is embedded within

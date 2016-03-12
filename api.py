@@ -26,12 +26,14 @@ def userlistjs():
         memcache.add(memcache_key, ids, 60 * 60 * 24)
     return 'var userlist = ' + ids + ';';
 
-@apis.route('/delete')
+# /system/ 以下の URL は cron などでアプリから実行される前提であるものとする
+
+@apis.route('/system/delete')
 def delete():
     datastore.delete_all()
     return 'delete.'
 
-@apis.route('/update')
+@apis.route('/system/update')
 def update():
     """スレッドを取得し保存、タスク処理用のオブジェクトを作成する"""
     thread_list = []
@@ -100,11 +102,15 @@ def update():
         });
     return 'updated.'
 
-@apis.route('/task')
+@apis.route('/system/task')
 def task():
+    # 一回で処理するタスク数
+    PROC_TASK_NUM = 10
+    
     entries = datastore.get_entry_task()
     thread_dic = {}
     ids_dic = {}
+    task_count = 0
     while entries:
         entry = entries.pop(0)
         
@@ -133,6 +139,9 @@ def task():
             if id not in ids_dic:
                 ids_dic[id] = []
             ids_dic[id].append(response_data.key())
+        task_count += 1
+        if task_count > PROC_TASK_NUM:
+            break
     for id, keys in ids_dic.iteritems():
         datastore.increment_user_count(id, keys)
     datastore.set_entry_task(entries)
