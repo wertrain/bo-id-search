@@ -10,6 +10,7 @@ import re
 import logging
 from datetime import datetime
 from my.util import psn
+from my.db import datastore
 from bs4 import BeautifulSoup
 
 def get_boards():
@@ -153,7 +154,7 @@ def get_user_list_from_html(html):
         })
     return result
 
-def download_html(url):
+def download_html(url,proxy=False):
     u"""
         URL から HTML を取得する
     """
@@ -171,7 +172,13 @@ def download_html(url):
     #opener = urllib2.build_opener(proxy)
     #urllib2.install_opener(opener)
     
-    request = urllib2.Request(url, headers=header)
+    request_url = url
+    if proxy:
+        easy_proxy_url = datastore.get_proxy_url()
+        if easy_proxy_url is not None:
+            request_url = easy_proxy_url + '?url=' + url
+    
+    request = urllib2.Request(request_url, headers=header)
     content = ''
     try:
         content = urllib2.urlopen(request).read()

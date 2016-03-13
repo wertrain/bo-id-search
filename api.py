@@ -26,6 +26,9 @@ def userlistjs():
         memcache.add(memcache_key, ids, 60 * 60 * 24)
     return 'var userlist = ' + ids + ';';
 
+@apis.route('/test')
+def test():
+    return datastore.get_proxy_url()
 # /system/ 以下の URL は cron などでアプリから実行される前提であるものとする
 
 @apis.route('/system/delete')
@@ -46,12 +49,12 @@ def update():
 
     results = []
     for thread in thread_list:
-        html = i2ch.download_html(thread['url'])
+        html = i2ch.download_html(thread['url'], proxy=True)
         results.append({
             'thread': thread,
             'user_list': i2ch.get_user_list_from_html(html)
         })
-
+    
     entries = []
     for result in results:
         # スレッド情報を取得
