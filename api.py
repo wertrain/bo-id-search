@@ -26,6 +26,10 @@ def userlistjs():
         memcache.add(memcache_key, ids, 60 * 60 * 24)
     return 'var userlist = ' + ids + ';';
 
+@apis.route('/test')
+def test():
+    return i2ch.download_html('', proxy=True)
+
 # /system/ 以下の URL は cron などでアプリから実行される前提であるものとする
 
 @apis.route('/system/delete')

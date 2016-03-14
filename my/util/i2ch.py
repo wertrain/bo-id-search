@@ -5,6 +5,7 @@ u"""
     __version__ = '0.1'
 """
 import urllib2
+import urllib
 import json
 import re
 import logging
@@ -12,6 +13,7 @@ from datetime import datetime
 from my.util import psn
 from my.db import datastore
 from bs4 import BeautifulSoup
+from google.appengine.api import urlfetch
 
 def get_boards():
     u"""
@@ -172,16 +174,19 @@ def download_html(url,proxy=False):
     #opener = urllib2.build_opener(proxy)
     #urllib2.install_opener(opener)
     
-    request_url = url
+    #urlfetch.set_default_fetch_deadline(60)
+    result = None
     if proxy:
         easy_proxy_url = datastore.get_proxy_url()
         if easy_proxy_url is not None:
-            request_url = easy_proxy_url + '?url=' + url
+            result = urlfetch.fetch(easy_proxy_url, urllib.urlencode({'url': url}), urlfetch.POST)
+    else:
+        result = urlfetch.fetch(url)
     
-    request = urllib2.Request(request_url, headers=header)
-    content = ''
-    try:
-        content = urllib2.urlopen(request).read()
-    except urllib2.HTTPError, e:
-        logging.error(e.fp.read())
-    return content
+    if result is None:
+        return 'error'
+    elif result.status_code == 200:
+        return result.content
+    else:
+        logging.error(result.content)
+        return 'error 2'
