@@ -179,7 +179,15 @@ def download_html(url,proxy=False):
     if proxy:
         easy_proxy_url = datastore.get_proxy_url()
         if easy_proxy_url is not None:
-            result = urlfetch.fetch(easy_proxy_url, urllib.urlencode({'url': url}), urlfetch.POST)
+            result = urlfetch.fetch(
+                url=easy_proxy_url,
+                payload=urllib.urlencode({'url': url}),
+                method=urlfetch.POST,
+                headers=header, 
+                allow_truncated=False,
+                follow_redirects=False,
+                deadline=5,
+                validate_certificate=False)
     else:
         result = urlfetch.fetch(url)
     
