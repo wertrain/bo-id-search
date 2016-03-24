@@ -28,7 +28,7 @@ def userlistjs():
 
 @apis.route('/test')
 def test():
-    return i2ch.download_html('', proxy=True)
+    return i2ch.download_html('https://github.com/wertrain?tab=contributions&from=2016-03-17')
 
 # /system/ 以下の URL は cron などでアプリから実行される前提であるものとする
 

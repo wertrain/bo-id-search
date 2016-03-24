@@ -156,7 +156,7 @@ def get_user_list_from_html(html):
         })
     return result
 
-def download_html(url,proxy=False):
+def download_html(url):
     u"""
         URL から HTML を取得する
     """
@@ -174,27 +174,9 @@ def download_html(url,proxy=False):
     #opener = urllib2.build_opener(proxy)
     #urllib2.install_opener(opener)
     
-    #urlfetch.set_default_fetch_deadline(60)
-    result = None
-    if proxy:
-        easy_proxy_url = datastore.get_proxy_url()
-        if easy_proxy_url is not None:
-            result = urlfetch.fetch(
-                url=easy_proxy_url,
-                payload=urllib.urlencode({'url': url}),
-                method=urlfetch.POST,
-                headers=header, 
-                allow_truncated=False,
-                follow_redirects=False,
-                deadline=5,
-                validate_certificate=False)
-    else:
-        result = urlfetch.fetch(url)
-    
-    if result is None:
-        return 'error'
-    elif result.status_code == 200:
+    result = urlfetch.fetch(url=url, headers=header)
+    if result.status_code == 200:
         return result.content
     else:
         logging.error(result.content)
-        return 'error 2'
+        return None
