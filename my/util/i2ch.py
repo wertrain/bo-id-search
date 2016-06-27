@@ -45,6 +45,24 @@ def get_boards():
             })
     return boardlist
 
+def get_boards_2ch_sc():
+    u"""
+        板一覧情報を取得する（2ch.sc）
+    """
+    url = 'http://www.2ch.sc/bbsmenu.html'
+    html = urllib2.urlopen(url).read()
+    utf8text = unicode(html, 'shift-jis', 'ignore').encode('utf-8')
+    # 一行ごとに分割 + 一行ずつ処理
+    bs = BeautifulSoup(html)
+    boardlist = {}
+    for a in bs.find_all('a'):
+        splitline = a['href'].split('/')
+        boardlist[a.string] = {
+            'host': splitline[2],
+            'name': splitline[3],
+        }
+    return boardlist
+
 def get_board_host_url(category, title):
     u"""
         板一覧情報を取得する
@@ -54,6 +72,15 @@ def get_board_host_url(category, title):
         if board['title'] == title:
             return board['host']
     return ''
+    
+def get_board_host_url_2ch_sc(title):
+    u"""
+        板一覧情報を取得する（2ch.sc）
+    """
+    boards = get_boards_2ch_sc()
+    if boards.has_key(title):
+        return boards[title]['host']
+    return None
 
 def get_board_subject_url(category, title):
     u"""
@@ -63,6 +90,15 @@ def get_board_subject_url(category, title):
     for board in boards[category]:
         if board['title'] == title:
             return 'http://' + board['host'] + '/' + board['name'] + '/subject.txt'
+    return ''
+
+def get_board_subject_url_2ch_sc(title):
+    u"""
+        subject.txtを取得する（2ch.sc）
+    """
+    boards = get_boards_2ch_sc()
+    if boards.has_key(title):
+        return 'http://' + boards[title]['host'] + '/' + boards[title]['name']  + '/subject.txt'
     return ''
 
 def search_thread_list(category, title, thread):
@@ -100,6 +136,43 @@ def search_thread_list(category, title, thread):
                 'url': 'http://' + target_board['host'] + '/test/read.cgi/' + target_board['name'] + '/' + dat_value,
                 'id': dat_value,
                 'response_num': int(splittitle[1][2:-1])
+            })
+    return result
+
+def search_thread_list_2ch_sc(title, thread):
+    u"""
+        板からスレッド取得する（2ch.sc）
+    """
+    target_board = None
+    boards = get_boards_2ch_sc()
+    if boards.has_key(title):
+        target_board = boards[title]
+    if target_board == None:
+        return ''
+    
+    url = 'http://' + target_board['host'] + '/' + target_board['name'] + '/subject.txt'
+    subject = urllib2.urlopen(url).read()
+    unicodesubject = unicode(subject, 'shift-jis', 'ignore').encode('utf-8')
+
+    result = []
+    list = unicodesubject.splitlines()
+    for line in list:
+        if (line.count('<>') == 0):
+            logging.error(url + ': download failed.')
+            return None
+        splitline = line.split('<>')
+        if thread in splitline[1]:
+            dat_value = splitline[0].replace('.dat', '')
+            # タイトルは
+            # 機動戦士ガンダムバトルオペレーション晒しスレ108 [無断転載禁止]©2ch.net	(618)
+            # こんな感じになっているので分離する
+            splittitle = re.split(r'\s', splitline[1])
+            result.append({
+                'title': splittitle[0],
+                'url': 'http://' + target_board['host'] + '/test/read.cgi/' + target_board['name'] + '/' + dat_value,
+                'dat': 'http://' + target_board['host'] + '/' + target_board['name'] + '/dat/' + dat_value + '.dat',
+                'id': dat_value,
+                'response_num': int(splittitle[len(splittitle) - 1][1:-1])
             })
     return result
 
