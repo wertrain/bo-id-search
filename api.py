@@ -37,6 +37,27 @@ def delete():
     datastore.delete_all()
     return 'delete.'
 
+@apis.route('/system/store')
+def store():
+    """スレッドを取得し保存、タスク処理用のオブジェクトを作成する"""
+    thread_list = []
+    thread = i2ch.search_thread_list_2ch_sc(u'ロボットゲー', 'バトルオペレーション晒し')
+    if thread is not None:
+        thread_list.extend(thread)
+    thread = i2ch.search_thread_list_2ch_sc(u'ネットwatch', 'バトルオペレーション晒し')
+    if thread is not None:
+        thread_list.extend(thread)
+        
+    results = []
+    for thread in thread_list:
+        dat = i2ch.download_html(thread['dat'])
+        results.append({
+            'user_list': i2ch.get_user_list_from_dat(dat)
+        })
+    
+    
+    return str(results)
+
 @apis.route('/system/update')
 def update():
     """スレッドを取得し保存、タスク処理用のオブジェクトを作成する"""

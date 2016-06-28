@@ -148,7 +148,7 @@ def search_thread_list_2ch_sc(title, thread):
     if boards.has_key(title):
         target_board = boards[title]
     if target_board == None:
-        return ''
+        return None
     
     url = 'http://' + target_board['host'] + '/' + target_board['name'] + '/subject.txt'
     subject = urllib2.urlopen(url).read()
@@ -161,7 +161,7 @@ def search_thread_list_2ch_sc(title, thread):
             logging.error(url + ': download failed.')
             return None
         splitline = line.split('<>')
-        if thread in splitline[1]:
+        if splitline[1].find(thread) > -1:
             dat_value = splitline[0].replace('.dat', '')
             # タイトルは
             # 機動戦士ガンダムバトルオペレーション晒しスレ108 [無断転載禁止]©2ch.net	(618)
@@ -223,6 +223,28 @@ def get_user_list_from_html(html):
         info['body'] = __text_with_newlines(dd)
         ddtext = r.sub('', dd.text)
         ids = psnutil.get_psn_id_list_from_text(ddtext)
+        result.append({
+            'response': info,
+            'ids': ids,
+        })
+    return result
+
+def get_user_list_from_dat(dat):
+    psnutil = psn.PSNUtil()
+    # ID:*** , URL の削除
+    r = re.compile('((?<=ID:)([a-zA-Z0-9\_-]){6,10})|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)')
+    result = []
+    number = 0
+    for line in dat.splitlines():
+        number = number + 1
+        # 名無しさん＠ｺﾞｰｺﾞｰｺﾞｰｺﾞｰ！ </b>(ﾜｯﾁｮｲ e418-ud2d)<b><>sage<>2016/06/05(日) 19:38:18.02 ID:sYCDwPc80.net<> 【ID】thny07&amp;#160; <br> 【罪状】くそ地雷 <br> 【説明】シチュBD1で棒立ちでマシをうつトロフィー100% <>
+        splitline = line.split('<>')
+        info = {
+            'number': number, 
+            'name': splitline[0], 
+            'mail': splitline[1], 
+        }
+        ids = psnutil.get_psn_id_list_from_text(splitline[3])
         result.append({
             'response': info,
             'ids': ids,
