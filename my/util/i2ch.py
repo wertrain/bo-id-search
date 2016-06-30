@@ -237,14 +237,19 @@ def get_user_list_from_dat(dat):
     number = 0
     for line in dat.splitlines():
         number = number + 1
-        # 名無しさん＠ｺﾞｰｺﾞｰｺﾞｰｺﾞｰ！ </b>(ﾜｯﾁｮｲ e418-ud2d)<b><>sage<>2016/06/05(日) 19:38:18.02 ID:sYCDwPc80.net<> 【ID】thny07&amp;#160; <br> 【罪状】くそ地雷 <br> 【説明】シチュBD1で棒立ちでマシをうつトロフィー100% <>
-        splitline = line.split('<>')
+        response_all = line.split('<>')
+        if len(response_all) == 0:
+            continue
+        date_time_id = response_all[2].split(' ')
+        tdatetime = datetime.strptime(date_time_id[0][:10] + ' ' + date_time_id[1][:11], '%Y/%m/%d %H:%M:%S.%f')
         info = {
             'number': number, 
-            'name': splitline[0], 
-            'mail': splitline[1], 
+            'name': response_all[0],
+            'mail': response_all[1],
+            'id': date_time_id[2][3:] if len(date_time_id) > 2 else None,
+            'datetime': tdatetime
         }
-        ids = psnutil.get_psn_id_list_from_text(splitline[3])
+        ids = psnutil.get_psn_id_list_from_text(r.sub('', response_all[3]))
         result.append({
             'response': info,
             'ids': ids,
@@ -255,23 +260,9 @@ def download_html(url):
     u"""
         URL から HTML を取得する
     """
-    header = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Charset': 'none',
-        'Accept-Encoding': 'gzip, deflate, sdch',
-        'Accept-Language': 'ja,en-US;q=0.8,en;q=0.6',
-        'Connection': 'keep-alive'
-    }
-    # http://stackoverflow.com/questions/17528759/how-to-fetch-a-url-by-proxy-on-google-app-engine
-    # Google App Engine 上では Proxy が使えないらしい
-    #proxy = urllib2.ProxyHandler({'http': '127.0.0.1'})
-    #opener = urllib2.build_opener(proxy)
-    #urllib2.install_opener(opener)
-    
-    result = urlfetch.fetch(url=url, headers=header)
+    result = urlfetch.fetch(url=url)
     if result.status_code == 200:
-        return result.content
+       return result.content
     else:
-        logging.error(result.content)
-        return None
+       logging.error(result.content)
+       return None

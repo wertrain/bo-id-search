@@ -21,9 +21,7 @@ class PSNUtil:
             'wiki', 'twitter', 'href', 'target', 'blank', 
             'border', 'exam', 'youtube', 'skype', 'watch',
             'facebook', 'sage', 'line', 'psid', 'psnid', 
-            'bb2ch', 'gp01', 'gp02', 'adsl', 'imgur', 'http',
-            'psnprofiles', 'atwiki', 'test', 'yomogi', 'test',
-            'read'
+            'bb2ch', 'gp01', 'gp02', 'adsl', 'G3BR'
         ]
         lowerid = id.lower()
         if lowerid in list:

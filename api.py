@@ -51,11 +51,12 @@ def store():
     results = []
     for thread in thread_list:
         dat = i2ch.download_html(thread['dat'])
-        results.append({
-            'user_list': i2ch.get_user_list_from_dat(dat)
-        })
-    
-    
+        unicodedat = unicode(dat, 'shift-jis', 'ignore').encode('utf-8', 'ignore')
+        # results.append({
+            # 'thread': thread,
+            # 'user_list': i2ch.get_user_list_from_dat(unicodedat)
+        # })
+        results.append(i2ch.get_user_list_from_dat(unicodedat))
     return str(results)
 
 @apis.route('/system/update')
