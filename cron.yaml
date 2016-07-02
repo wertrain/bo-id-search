@@ -1,10 +1,15 @@
 cron:
-#- description: スレッドを取得し、タスク処理用のテキストを保存する
-#  url: /system/update
-#  schedule: every 6 hours
-#  timezone: Asia/Tokyo
+- description: スレッドを取得し、保存する
+  url: /system/task-1
+  schedule: every 24 hours
+  timezone: Asia/Tokyo
 
-#- description: タスク処理用のテキストを展開し、IDを保存する
-#  url: /system/task
-#  schedule: every 60 minutes
-#  timezone: Asia/Tokyo
+- description: 取得済みのスレッドから dat を取得し、ユーザー情報などを保存する
+  url: /system/task-2
+  schedule: every 12 hours
+  timezone: Asia/Tokyo
+
+- description: 取得済みのスレッドから dat を取得し、ユーザー情報などを保存する
+  url: /system/task-3
+  schedule: every 1 hours
+  timezone: Asia/Tokyo

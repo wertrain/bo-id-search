@@ -54,7 +54,7 @@ def task_1():
 
 @apis.route('/system/task-2')
 def task_2():
-    """task-1で保存したスレッドからタスク待ちオブジェクトを作成する"""
+    """task-1 で保存したスレッドからタスク待ちオブジェクトを作成する"""
     task = datastore.get_next_task()
     if task is None:
         logging.info('task not found.')
@@ -102,7 +102,7 @@ def task_2():
 
 @apis.route('/system/task-3')
 def task_3():
-    """task-2で保存した情報を展開して書き込む"""
+    """task-2 で保存した情報を展開して書き込む"""
     # 一回で処理するタスク数
     PROC_TASK_NUM = 10
     
