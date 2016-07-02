@@ -47,8 +47,7 @@ class Task (db.Model):
     """
     url = db.StringProperty()
     id = db.StringProperty()
-    thread = db.ReferenceProperty(Thread)
-    entries = db.ReferenceProperty(TaskEntries)
+    dat_url = db.StringProperty()
     executed = db.DateTimeProperty(auto_now_add=True)
 
 def update_task(id, param):
@@ -57,6 +56,7 @@ def update_task(id, param):
         task = Task()
         task.id = id
         task.url = param.get('url')
+        task.dat_url = param.get('dat_url')
         task.put()
     else:
         # id は存在するが URL が違う場合は、移転されたと見なして URL を更新しておく

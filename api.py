@@ -47,7 +47,8 @@ def task_1():
     
     for thread in thread_list:
         datastore.update_task(thread['id'], {
-            'url': thread['dat'],
+            'url': thread['url'],
+            'dat_url': thread['dat'],
             'title': thread['title'],
         })
     return request.url
@@ -59,9 +60,9 @@ def task_2():
     if task is None:
         logging.info('task not found.')
         return request.url
-    dat = i2ch.download_html(task.url)
+    dat = i2ch.download_html(task.dat_url)
     if dat is None:
-        logging.error('download failed. URL:' + task.url)
+        logging.error('download failed. URL:' + task.dat_url)
         return request.url
 
     # スレッド情報を取得し、チェック済み番号を取得

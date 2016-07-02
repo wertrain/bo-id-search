@@ -53,7 +53,7 @@ def search(psnid):
         for key in user.responses[:5]:
             response = datastore.get_response_from_key(key)
             params.append(response)
-    return render_template('id.html', user=user, params=params, page_type=0)
+    return render_template('id.html', user=user, id=psnid, params=params, page_type=0)
 
 @app.errorhandler(404)
 def page_not_found(e):
