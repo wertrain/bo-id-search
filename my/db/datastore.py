@@ -5,6 +5,7 @@ u"""
     __version__ = '0.1'
 """
 import json
+from datetime import datetime
 from google.appengine.ext import db
 
 class Thread (db.Model):
@@ -36,12 +37,44 @@ class PSNUser (db.Model):
     id = db.StringProperty()
     count = db.IntegerProperty(default=0)
     responses = db.ListProperty(db.Key, default=[])
-
+    
 class TaskEntries (db.Model):
     responses = db.TextProperty(default='')
 
-class ProxyData (db.Model):
-    url = db.StringProperty(default='')
+class Task (db.Model):
+    u"""
+        一つのタスクを表すデータモデル
+    """
+    url = db.StringProperty()
+    id = db.StringProperty()
+    thread = db.ReferenceProperty(Thread)
+    entries = db.ReferenceProperty(TaskEntries)
+    executed = db.DateTimeProperty(auto_now_add=True)
+
+def update_task(id, param):
+    task = __get_task(id)
+    if task is None:
+        task = Task()
+        task.id = id
+        task.url = param.get('url')
+        task.put()
+    else:
+        # id は存在するが URL が違う場合は、移転されたと見なして URL を更新しておく
+        if task.url != param.get('url'):
+            task.url = param.get('url')
+            task.put()
+    return task
+
+def get_next_task():
+    task = db.Query(Task).order('executed').get()
+    if task is None:
+        return None
+    task.executed = datetime.now()
+    task.put()
+    return task
+
+def __get_task(id):
+    return db.Query(Task).filter('id =', id).get()
 
 def create_response(param):
     response = Response()
@@ -140,19 +173,6 @@ def get_all_psnuser_count():
 def get_all_thread_count():
     return db.Query(Thread).count()
 
-def get_proxy_url():
-    data = db.Query(ProxyData).get()
-    if data is None:
-        return None
-    return data.url
-
-def set_proxy_url(url):
-    data = db.Query(ProxyData).get()
-    if data is None:
-        data = ProxyData()
-    data.url = url
-    data.put()
-
 def delete_all():
     for thread in Thread.all():
         thread.delete()
@@ -160,7 +180,9 @@ def delete_all():
         response.delete()
     for user in PSNUser.all():
         user.delete()
-    for task in TaskEntries.all():
+    for entries in TaskEntries.all():
+        entries.delete()
+    for task in Task.all():
         task.delete()
     #for data in ProxyData.all():
     #    data.delete()

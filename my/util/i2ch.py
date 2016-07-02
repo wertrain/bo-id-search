@@ -168,7 +168,7 @@ def search_thread_list_2ch_sc(title, thread):
             # こんな感じになっているので分離する
             splittitle = re.split(r'\s', splitline[1])
             result.append({
-                'title': splittitle[0],
+                'title': splittitle[0].decode('utf-8'),
                 'url': 'http://' + target_board['host'] + '/test/read.cgi/' + target_board['name'] + '/' + dat_value,
                 'dat': 'http://' + target_board['host'] + '/' + target_board['name'] + '/dat/' + dat_value + '.dat',
                 'id': dat_value,
@@ -231,14 +231,17 @@ def get_user_list_from_html(html):
 
 def get_user_list_from_dat(dat):
     psnutil = psn.PSNUtil()
-    # ID:*** , URL の削除
-    r = re.compile('((?<=ID:)([a-zA-Z0-9\_-]){6,10})|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)')
+    # ID:*** , URL の削除, タグ
+    r = re.compile('((?<=ID:)([a-zA-Z0-9\_-]){6,10})|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)|<[^<]+?>')
     result = []
     number = 0
     for line in dat.splitlines():
         number = number + 1
         response_all = line.split('<>')
         if len(response_all) == 0:
+            continue
+        ids = psnutil.get_psn_id_list_from_text(r.sub('', response_all[3]))
+        if len(ids) == 0: # 検出 id がゼロならスキップ
             continue
         date_time_id = response_all[2].split(' ')
         tdatetime = datetime.strptime(date_time_id[0][:10] + ' ' + date_time_id[1][:11], '%Y/%m/%d %H:%M:%S.%f')
@@ -247,9 +250,9 @@ def get_user_list_from_dat(dat):
             'name': response_all[0],
             'mail': response_all[1],
             'id': date_time_id[2][3:] if len(date_time_id) > 2 else None,
+            'body': response_all[3],
             'datetime': tdatetime
         }
-        ids = psnutil.get_psn_id_list_from_text(r.sub('', response_all[3]))
         result.append({
             'response': info,
             'ids': ids,
