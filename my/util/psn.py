@@ -18,10 +18,9 @@ class PSNUtil:
         """
         # 頻出単語BL
         list = [
-            'wiki', 'twitter', 'href', 'target', 'blank', 
-            'border', 'exam', 'youtube', 'skype', 'watch',
+            'wiki', 'twitter', 'exam', 'youtube', 'skype', 'watch',
             'facebook', 'sage', 'line', 'psid', 'psnid', 
-            'bb2ch', 'gp01', 'gp02', 'adsl', 'G3BR'
+            'bb2ch', 'gp01', 'gp02', 'adsl', 'g3br', 'mail'
         ]
         lowerid = id.lower()
         if lowerid in list:

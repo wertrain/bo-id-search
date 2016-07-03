@@ -211,8 +211,8 @@ def get_user_list_from_html(html):
         スレッドの URL から HTML を取得し、パースする
     """
     psnutil = psn.PSNUtil()
-    # ID:*** , URL の削除
-    r = re.compile('((?<=ID:)([a-zA-Z0-9\_-]){6,10})|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)')
+    # ID:*** , (ﾜｯﾁｮｲ ****-****) など, URL の削除
+    r = re.compile('((?<=ID:)([a-zA-Z0-9\_-]){6,10})|(\(.+ [a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}\))|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)')
     result = []
     # <dt>, <dd> の閉じタグが抜けているので適当な対策
     html = html.replace('<dd>', '</dt><dd>').replace('<br><br>\n', '</dd><br><br>\n').decode('shift_jis', 'ignore')
