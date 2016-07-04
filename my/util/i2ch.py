@@ -176,24 +176,6 @@ def search_thread_list_2ch_sc(title, thread):
             })
     return result
 
-def parse_dt(dt):
-    u"""
-        HTMLタグ dt の行から レス番号/名前/ID/時刻 をパースし、オブジェクトとして返す
-    """
-    dttext = dt.text.encode('utf-8', 'ignore')
-    base = dttext.split('：')
-    info = base[2].split()
-    tdatetime = datetime.strptime(info[0][:10] + ' ' + info[1][:11], '%Y/%m/%d %H:%M:%S.%f')
-    a = dt.find('a')
-    mail = '' if a is None else a.get('href')[7:]
-    return {
-        'number': unicode(base[0], 'utf-8'), 
-        'name': unicode(base[1], 'utf-8', 'ignore'),
-        'mail': mail,
-        'id': unicode(info[2][3:], 'utf-8'), 
-        'datetime': tdatetime
-    }
-
 def __text_with_newlines(element):
     u"""
         <br> を改行に置き換えて返す
@@ -206,33 +188,10 @@ def __text_with_newlines(element):
             text += '\n'
     return text
 
-def get_user_list_from_html(html):
-    u"""
-        スレッドの URL から HTML を取得し、パースする
-    """
+def get_user_list_from_dat(dat):
     psnutil = psn.PSNUtil()
     # ID:*** , (ﾜｯﾁｮｲ ****-****) など, URL の削除
     r = re.compile('((?<=ID:)([a-zA-Z0-9\_-]){6,10})|(\(.+ [a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}\))|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)')
-    result = []
-    # <dt>, <dd> の閉じタグが抜けているので適当な対策
-    html = html.replace('<dd>', '</dt><dd>').replace('<br><br>\n', '</dd><br><br>\n').decode('shift_jis', 'ignore')
-    bs = BeautifulSoup(html)
-    for dt in bs.find_all('dt'):
-        info = parse_dt(dt)
-        dd = dt.findNextSibling('dd')
-        info['body'] = __text_with_newlines(dd)
-        ddtext = r.sub('', dd.text)
-        ids = psnutil.get_psn_id_list_from_text(ddtext)
-        result.append({
-            'response': info,
-            'ids': ids,
-        })
-    return result
-
-def get_user_list_from_dat(dat):
-    psnutil = psn.PSNUtil()
-    # ID:*** , URL の削除, タグ
-    r = re.compile('((?<=ID:)([a-zA-Z0-9\_-]){6,10})|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)|<[^<]+?>')
     result = []
     number = 0
     for line in dat.splitlines():
