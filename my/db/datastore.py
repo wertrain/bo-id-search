@@ -39,6 +39,9 @@ class PSNUser (db.Model):
     responses = db.ListProperty(db.Key, default=[])
     
 class TaskEntries (db.Model):
+    u"""
+        タスクで作成された複数のエントリーを表すデータモデル
+    """
     responses = db.TextProperty(default='')
 
 class Task (db.Model):
@@ -184,5 +187,3 @@ def delete_all():
         entries.delete()
     for task in Task.all():
         task.delete()
-    #for data in ProxyData.all():
-    #    data.delete()
