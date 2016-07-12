@@ -192,6 +192,7 @@ def get_user_list_from_dat(dat):
     psnutil = psn.PSNUtil()
     # HTML特殊文字, ID:*** , (ﾜｯﾁｮｲ ****-****) など, URL の削除
     r = re.compile('(&[a-z]+;)|((?<=ID:)([a-zA-Z0-9\_-]){6,10})|(\(.+ [a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}\))|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)')
+    p = re.compile('<[^>]*?>')
     result = []
     number = 0
     for line in dat.splitlines():
@@ -199,7 +200,9 @@ def get_user_list_from_dat(dat):
         response_all = line.split('<>')
         if len(response_all) == 0:
             continue
-        ids = psnutil.get_psn_id_list_from_text(r.sub('', response_all[3]))
+        body = p.sub('', response_all[3])
+        body = r.sub('', body)
+        ids = psnutil.get_psn_id_list_from_text(body)
         if len(ids) == 0: # 検出 id がゼロならスキップ
             continue
         date_time_id = response_all[2].split(' ')
