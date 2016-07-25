@@ -53,6 +53,9 @@ class Task (db.Model):
     dat_url = db.StringProperty()
     executed = db.DateTimeProperty(auto_now_add=True)
 
+class ImportData  (db.Model):
+    files = db.StringListProperty(default=[])
+
 def update_task(id, param):
     task = __get_task(id)
     if task is None:
@@ -175,6 +178,13 @@ def get_all_psnuser_count():
 
 def get_all_thread_count():
     return db.Query(Thread).count()
+
+def set_import_list(list):
+    data = db.Query(ImportData).get()
+    if data is None:
+        data = ImportData()
+    data.files = list
+    data.put()
 
 def delete_all():
     for thread in Thread.all():

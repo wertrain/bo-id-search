@@ -55,6 +55,18 @@ def search(psnid):
             params.append(response)
     return render_template('id.html', user=user, id=psnid, params=params, page_type=0)
 
+@app.route('/import')
+def imprt():
+    """トップページを表示する"""
+    file = open('import/list.txt')
+    lines = file.readlines()
+    file.close()
+    list = []
+    for line in lines:
+        list.append(line.strip())
+    datastore.set_import_list(list)
+    return 'OK'
+
 @app.errorhandler(404)
 def page_not_found(e):
     """Return a custom 404 error."""
