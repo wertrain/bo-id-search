@@ -186,6 +186,14 @@ def set_import_list(list):
     data.files = list
     data.put()
 
+def pop_imported_list():
+    data = db.Query(ImportData).get()
+    if data is None:
+        return None
+    line = data.files.pop()
+    #data.put()
+    return line
+
 def delete_all():
     for thread in Thread.all():
         thread.delete()

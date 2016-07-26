@@ -34,6 +34,61 @@ def delete():
     datastore.delete_all()
     return request.url
 
+@apis.route('/system/import-0')
+def import_0():
+    """ファイルリストをインポート"""
+    file = open('import/list.txt')
+    lines = file.readlines()
+    file.close()
+    list = []
+    for line in lines:
+        list.append(line.strip())
+    datastore.set_import_list(list)
+    return request.url
+
+@apis.route('/system/import-1')
+def import_1():
+    file_name = datastore.pop_imported_list()
+    if file_name is None:
+        return
+        
+    file = open('import/' + file_name + '.txt')
+    dat = file.readlines()
+    file.close()
+    
+    file = open('import/' + file_name + '.json')
+    thread = '\n'.join(file.readlines())
+    thread = json.loads(thread)
+    file.close()
+    return str(thread.id)
+    
+    unicodedat = unicode(dat, 'shift-jis', 'ignore')
+    counter = Counter(unicodedat)
+    users = i2ch.get_user_list_from_dat(unicodedat)
+    
+    entries = []
+    for user in users:
+        response_num = int(user['response']['number'])
+        entries.append({
+            'number': response_num,
+            'author': user['response']['name'],
+            'mail': user['response']['mail'],
+            'body': user['response']['body'],
+            'authorid': user['response']['id'],
+            'thread': task.id,
+            'at': user['response']['datetime'].strftime('%Y/%m/%d %H:%M:%S.%f'),
+            'ids': user['ids']
+        })
+    thread_title = unicodedat.splitlines()[0].split('<>')[4] # 乱暴、データ形式が変わるとこける
+    thread_title = thread_title.replace('&amp;', '&');
+    datastore.add_entry_task(entries)
+    datastore.update_thread(task.id, {
+        'url': task.url,
+        'response_num': counter['\n'],
+        'title': thread_title
+    })
+    
+
 @apis.route('/system/task-1')
 def task_1():
     """スレッドを取得し保存"""
