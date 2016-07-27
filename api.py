@@ -53,15 +53,14 @@ def import_1():
         return
         
     file = open('import/' + file_name + '.txt')
-    dat = file.readlines()
+    dat = '\n'.join(file.readlines())
     file.close()
     
     file = open('import/' + file_name + '.json')
     thread = '\n'.join(file.readlines())
-    thread = json.loads(thread)
     file.close()
-    return str(thread.id)
-    
+    thread = json.loads(thread)
+
     unicodedat = unicode(dat, 'shift-jis', 'ignore')
     counter = Counter(unicodedat)
     users = i2ch.get_user_list_from_dat(unicodedat)
@@ -82,12 +81,12 @@ def import_1():
     thread_title = unicodedat.splitlines()[0].split('<>')[4] # 乱暴、データ形式が変わるとこける
     thread_title = thread_title.replace('&amp;', '&');
     datastore.add_entry_task(entries)
-    datastore.update_thread(task.id, {
-        'url': task.url,
+    datastore.update_thread(thread['id'], {
+        'url': thread['url'],
         'response_num': counter['\n'],
-        'title': thread_title
+        'title': thread['title']
     })
-    
+    return request.url
 
 @apis.route('/system/task-1')
 def task_1():

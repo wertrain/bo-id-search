@@ -200,6 +200,7 @@ def get_user_list_from_dat(dat):
         response_all = line.split('<>')
         if len(response_all) == 0:
             continue
+        logging.error(response_all[0])
         body = p.sub('', response_all[3])
         body = r.sub('', body)
         ids = psnutil.get_psn_id_list_from_text(body)
