@@ -191,7 +191,7 @@ def pop_imported_list():
     if data is None:
         return None
     line = data.files.pop()
-    #data.put()
+    data.put()
     return line
 
 def delete_all():

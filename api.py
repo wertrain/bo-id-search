@@ -74,7 +74,7 @@ def import_1():
             'mail': user['response']['mail'],
             'body': user['response']['body'],
             'authorid': user['response']['id'],
-            'thread': task.id,
+            'thread': thread['url'],
             'at': user['response']['datetime'].strftime('%Y/%m/%d %H:%M:%S.%f'),
             'ids': user['ids']
         })
@@ -159,7 +159,7 @@ def task_2():
 def task_3():
     """task-2 で保存した情報を展開して書き込む"""
     # 一回で処理するタスク数
-    PROC_TASK_NUM = 10
+    PROC_TASK_NUM = 20
     
     entries = datastore.get_entry_task()
     thread_dic = {}

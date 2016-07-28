@@ -11,5 +11,10 @@ cron:
 
 - description: 取得済みのスレッドから dat を取得し、ユーザー情報などを保存する
   url: /system/task-3
-  schedule: every 1 hours
+  schedule: every 30 minutes
+  timezone: Asia/Tokyo
+
+- description: 既存のデータをインポートする
+  url: /system/import_1
+  schedule: every 24 hours
   timezone: Asia/Tokyo

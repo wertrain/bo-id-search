@@ -198,9 +198,9 @@ def get_user_list_from_dat(dat):
     for line in dat.splitlines():
         number = number + 1
         response_all = line.split('<>')
-        if len(response_all) == 0:
+        if len(response_all) < 4:
             continue
-        logging.error(response_all[0])
+        logging.error(response_all)
         body = p.sub('', response_all[3])
         body = r.sub('', body)
         ids = psnutil.get_psn_id_list_from_text(body)
