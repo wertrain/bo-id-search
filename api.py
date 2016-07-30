@@ -130,6 +130,7 @@ def task_2():
     users = i2ch.get_user_list_from_dat(unicodedat)
     
     entries = []
+    response_num = 0
     for user in users:
         response_num = int(user['response']['number'])
         # まだ未チェックのレス番までスキップする
@@ -150,7 +151,7 @@ def task_2():
     datastore.add_entry_task(entries)
     datastore.update_thread(task.id, {
         'url': task.url,
-        'response_num': counter['\n'],
+        'response_num': response_num,
         'title': thread_title
     })
     return request.url

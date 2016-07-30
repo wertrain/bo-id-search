@@ -190,8 +190,8 @@ def __text_with_newlines(element):
 
 def get_user_list_from_dat(dat):
     psnutil = psn.PSNUtil()
-    # HTML特殊文字, ID:*** , (ﾜｯﾁｮｲ ****-****) など, URL の削除
-    r = re.compile('(&[a-z]+;)|((?<=ID:)([a-zA-Z0-9\_-]){6,10})|(\(.+ [a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}\))|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)')
+    # HTML特殊文字, ID:*** , (ﾜｯﾁｮｲ ****-****) など, URL の削除, Rock54: Caution() の削除
+    r = re.compile('(&[a-z]+;)|((?<=ID:)([a-zA-Z0-9\_-]){6,10})|(\(.+ [a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}\))|((?:https?|ftp|ttp|ttps):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)|(Rock54: .+\(.+\))')
     p = re.compile('<[^>]*?>')
     result = []
     number = 0
