@@ -19,7 +19,7 @@ class PSNUtil:
         # 頻出単語BL
         list = [
             'wiki', 'twitter', 'exam', 'youtube', 'skype', 'watch',
-            'facebook', 'sage', 'line', 'psid', 'psnid', 
+            'facebook', 'sage', 'line', 'psid', 'psnid', 'ps3id',
             'bb2ch', 'gp01', 'gp02', 'adsl', 'g3br', 'mail', 'vvvvv'
         ]
         lowerid = id.lower()
