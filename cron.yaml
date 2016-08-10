@@ -16,5 +16,5 @@ cron:
 
 - description: 既存のデータをインポートする
   url: /system/import-1
-  schedule: every 14 hours
+  schedule: every 16 hours
   timezone: Asia/Tokyo
